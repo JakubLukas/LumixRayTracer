@@ -12,9 +12,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\raytracer\raytracer.cpp" />
+    <ClCompile Include="..\..\src\raytracer\raytracer_system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\raytracer.h" />
+    <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{811DF642-44AE-4242-9815-67C86CA612F6}</ProjectGuid>
