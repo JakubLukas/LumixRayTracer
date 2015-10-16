@@ -56,13 +56,13 @@
       <SDLCheck>true</SDLCheck>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>D:\Ccko\Lumix\LumixEngine\projects\..\src;D:\Ccko\Lumix\LumixEngine\projects\..\src\engine;D:\Ccko\Lumix\LumixEngine\projects\..\external\bgfx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\LumixEngine\src;..\..\..\LumixEngine\src\engine;..\..\..\LumixEngine\src\editor;..\..\..\LumixEngine\external\bgfx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;BUILDING_RAYTRACER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>D:\Ccko\Lumix\LumixEngine\projects\Debug\renderer.lib;D:\Ccko\Lumix\LumixEngine\projects\Debug\engine.lib;D:\Ccko\Lumix\LumixEngine\external\bgfx\lib\win32\bgfx$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\LumixEngine\projects\Debug\renderer.lib;..\..\..\LumixEngine\projects\Debug\engine.lib;..\..\..\LumixEngine\projects\Debug\editor.lib;..\..\..\LumixEngine\external\bgfx\lib\win32\bgfx$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>
