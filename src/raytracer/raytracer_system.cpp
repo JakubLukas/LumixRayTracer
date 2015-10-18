@@ -33,6 +33,8 @@
 #include <Windows.h>
 #include <cstdio>
 
+#include "raytracer.h"
+
 namespace LumixRayTracer
 {
 	static const char* MATERIAL_PATH = "models/raytracer/raytracer.mat";
@@ -41,11 +43,12 @@ namespace LumixRayTracer
 	struct RayTracerSystemImpl : public RayTracerSystem
 	{
 		Lumix::Engine& _engine;
-		Lumix::Texture* _texture;
 		Lumix::WorldEditor* _editor;
+
+		Lumix::Texture* _texture;
 		bool _textureLoaded = false;
 
-		#pragma region construct / destruct
+		RayTracer rayTracer;
 
 		RayTracerSystemImpl(Lumix::Engine& engine)
 			: _engine(engine), _editor(nullptr)
@@ -69,17 +72,13 @@ namespace LumixRayTracer
 				_texture->addDataReference();
 				_texture->onLoaded<RayTracerSystemImpl, &RayTracerSystemImpl::onTextureLoaded>(this);
 			}
+
 			{
 				auto* manager = _engine.getResourceManager().get(Lumix::ResourceManager::PIPELINE);
 				Lumix::PipelineManager* pip_manager = static_cast<Lumix::PipelineManager*>(manager);
 
 				auto* resource = pip_manager->get(Lumix::Path("pipelines/main.lua"));
 				Lumix::Pipeline* pipline = static_cast<Lumix::Pipeline*>(resource);
-
-				/*pipline->
-
-				m_scene->getUniverse().getPosition(
-					m_scene->getCameraEntity(m_applied_camera));*/
 			}
 			return true;
 		}
@@ -90,28 +89,16 @@ namespace LumixRayTracer
 				_texture->removeDataReference();
 		}
 
-		#pragma endregion
-
 		void onTextureLoaded(Lumix::Resource::State, Lumix::Resource::State new_state)
 		{
-			if (new_state == Lumix::Resource::State::READY)
-				_textureLoaded = true;
-			else
-				ASSERT(false);
+			_textureLoaded = (new_state == Lumix::Resource::State::READY);
 		}
 
 		virtual void update(float deltaTime) override
 		{
-			if (!_textureLoaded/* || _editor == nullptr*/) return;
+			if (!_textureLoaded || _editor == nullptr) return;
 
-			/*auto* render_scene = static_cast<Lumix::RenderScene*>(_editor->getScene(Lumix::crc32("renderer")));
-			Lumix::Entity camera = render_scene->getCameraEntity(render_scene->getCameraInSlot("editor"));
-			Lumix::ComponentUID id = _editor->getComponent(camera, Lumix::crc32("camera"));
-			
-			Lumix::Vec3 pos = _editor->getUniverse()->getPosition(camera);
-			Lumix::Quat rot = _editor->getUniverse()->getRotation(camera);
-			float fov = render_scene->getCameraFOV(id.index);
-			int camWidth = render_scene->getCameraWidth(id.index);*/
+			updateCamera();
 
 			int m_y = 0;
 			int m_x = 0;
@@ -132,6 +119,24 @@ namespace LumixRayTracer
 				}
 			}
 			_texture->onDataUpdated(m_x, m_y, m_width, m_height);
+		}
+
+		void updateCamera()
+		{
+			auto* render_scene = static_cast<Lumix::RenderScene*>(_editor->getScene(Lumix::crc32("renderer")));
+			Lumix::Entity camera = render_scene->getCameraEntity(render_scene->getCameraInSlot("editor"));
+			Lumix::ComponentUID id = _editor->getComponent(camera, Lumix::crc32("camera"));
+
+			Lumix::Vec3 pos = _editor->getUniverse()->getPosition(camera);
+			Lumix::Quat rot = _editor->getUniverse()->getRotation(camera);
+			float fov = render_scene->getCameraFOV(id.index);
+			int width = render_scene->getCameraWidth(id.index);
+			int height = render_scene->getCameraHeight(id.index);
+			int nearPlane = render_scene->getCameraNearPlane(id.index);
+			int farPlane = render_scene->getCameraFarPlane(id.index);
+			Lumix::Matrix mat = _editor->getUniverse()->getMatrix(camera);
+
+			rayTracer.UpdateCamera(pos, rot, fov, width, height, nearPlane, farPlane, mat);
 		}
 
 		virtual void setWorldEditor(Lumix::WorldEditor& editor) override
