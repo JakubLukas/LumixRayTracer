@@ -1,6 +1,11 @@
 #include "raytracer.h"
 
+#include "vector3.h"
 #include "ray.h"
+#include "sphere.h"
+#include "collisions.h"
+
+#include "renderer/texture.h"
 
 
 namespace LumixRayTracer
@@ -16,14 +21,27 @@ RayTracer::~RayTracer()
 
 }
 
-void RayTracer::Update(const float &deltaTime)
+void RayTracer::Update(const float &deltaTime, Lumix::Texture* texture)
 {
-	for (unsigned int y = 0; y < camera.Height; ++y)
+	int bpp = texture->getBytesPerPixel();
+
+	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 2.0f);
+	Ray ray;
+	Vector3 intersection;
+	for (unsigned int y = 0; y < texture->getHeight(); ++y)
 	{
-		for (unsigned int x = 0; x < camera.Height; ++x)
+		for (unsigned int x = 0; x < texture->getWidth(); ++x)
 		{
-			Ray ray = camera.getRay(x, y);
-			//if ()
+			ray = camera.getRay(x, y);
+			
+			int index = bpp * (y + x * texture->getWidth());
+			for (int k = 0; k < bpp; ++k)
+			{
+				if (Collisions::RayAndSphere(ray, s, intersection))
+					texture->getData()[index + k] = 200;
+				else
+					texture->getData()[index + k] = 0;
+			}
 		}
 	}
 }
