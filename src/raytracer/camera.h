@@ -1,10 +1,10 @@
 #pragma once
 
-#include "lumix.h"
-#include "engine/core/vec3.h"
-#include "engine/core/quat.h"
-#include "engine/core/matrix.h"
-#include "engine/core/math_utils.h"
+#include "vector3.h"
+#include "vector4.h"
+#include "quaternion.h"
+#include "matrix44.h"
+#include "math_rt.h"
 
 #include "ray.h"
 
@@ -14,9 +14,9 @@ namespace LumixRayTracer
 
 struct Camera
 {
-	Lumix::Vec3 Position;
-	Lumix::Quat Rotation;
-	Lumix::Matrix ViewMatrix;
+	Vector3 Position;
+	Quaternion Rotation;
+	Matrix44 ViewMatrix;
 	float FOV;
 	float Width;
 	float Height;
@@ -35,14 +35,14 @@ struct Camera
 
 		float ratio = Width / Height;
 
-		Lumix::Matrix projection_matrix;
+		Matrix44 projection_matrix;
 		projection_matrix.setPerspective(
-			Lumix::Math::degreesToRadians(FOV), ratio, NearPlane, FarPlane);
+			Math::RadFromDeg(FOV), ratio, NearPlane, FarPlane);
 		ViewMatrix.inverse();
-		Lumix::Matrix inverted = (projection_matrix * ViewMatrix);
+		Matrix44 inverted = (projection_matrix * ViewMatrix);
 		inverted.inverse();
-		Lumix::Vec4 p0 = inverted * Lumix::Vec4(nx, ny, -1, 1);
-		Lumix::Vec4 p1 = inverted * Lumix::Vec4(nx, ny, 1, 1);
+		Vector4 p0 = inverted * Vector4(nx, ny, -1, 1);
+		Vector4 p1 = inverted * Vector4(nx, ny, 1, 1);
 		p0.x /= p0.w;
 		p0.y /= p0.w;
 		p0.z /= p0.w;
@@ -50,7 +50,7 @@ struct Camera
 		p1.y /= p1.w;
 		p1.z /= p1.w;
 
-		Lumix::Vec3 dir;
+		Vector3 dir;
 		dir.x = p1.x - p0.x;
 		dir.y = p1.y - p0.y;
 		dir.z = p1.z - p0.z;

@@ -16,9 +16,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\camera.h" />
-    <ClInclude Include="..\..\src\raytracer\ray.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="math.vcxproj">
+      <Project>{a3356565-e638-4e1a-8fce-e5a3066ad191}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{811DF642-44AE-4242-9815-67C86CA612F6}</ProjectGuid>
@@ -60,13 +64,13 @@
       <SDLCheck>true</SDLCheck>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>..\..\..\LumixEngine\src;..\..\..\LumixEngine\src\engine;..\..\..\LumixEngine\src\editor;..\..\..\LumixEngine\external\bgfx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\LumixEngine\src;..\..\..\LumixEngine\src\engine;..\..\..\LumixEngine\src\editor;..\..\..\LumixEngine\external\bgfx\include;..\..\src\math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;BUILDING_RAYTRACER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\..\..\LumixEngine\projects\Debug\renderer.lib;..\..\..\LumixEngine\projects\Debug\engine.lib;..\..\..\LumixEngine\projects\Debug\editor.lib;..\..\..\LumixEngine\external\bgfx\lib\win32\bgfx$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\LumixEngine\projects\Debug\renderer.lib;..\..\..\LumixEngine\projects\Debug\engine.lib;..\..\..\LumixEngine\projects\Debug\editor.lib;..\..\..\LumixEngine\external\bgfx\lib\win32\bgfx$(Configuration).lib;Debug\math.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>

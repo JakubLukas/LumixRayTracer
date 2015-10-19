@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{3BE16A7D-7958-46E4-830B-695B4E25784E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "raytracer", "raytracer.vcxproj", "{811DF642-44AE-4242-9815-67C86CA612F6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "math", "math.vcxproj", "{A3356565-E638-4E1A-8FCE-E5A3066AD191}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{811DF642-44AE-4242-9815-67C86CA612F6}.Debug|Win32.Build.0 = Debug|Win32
 		{811DF642-44AE-4242-9815-67C86CA612F6}.Release|Win32.ActiveCfg = Release|Win32
 		{811DF642-44AE-4242-9815-67C86CA612F6}.Release|Win32.Build.0 = Release|Win32
+		{A3356565-E638-4E1A-8FCE-E5A3066AD191}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A3356565-E638-4E1A-8FCE-E5A3066AD191}.Debug|Win32.Build.0 = Debug|Win32
+		{A3356565-E638-4E1A-8FCE-E5A3066AD191}.Release|Win32.ActiveCfg = Release|Win32
+		{A3356565-E638-4E1A-8FCE-E5A3066AD191}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

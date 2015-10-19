@@ -8,6 +8,5 @@
     <ClInclude Include="..\..\src\raytracer\raytracer.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
     <ClInclude Include="..\..\src\raytracer\camera.h" />
-    <ClInclude Include="..\..\src\raytracer\ray.h" />
   </ItemGroup>
 </Project>
