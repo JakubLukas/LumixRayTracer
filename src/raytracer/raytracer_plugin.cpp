@@ -37,163 +37,173 @@
 
 namespace LumixRayTracer
 {
-	static const char* MATERIAL_PATH = "models/raytracer/raytracer.mat";
-	static const char* TEXTURE_PATH = "models/raytracer/raytracer.tga";
 
-	static const uint32_t RENDERER_CRC = Lumix::crc32("renderer");
-	static const uint32_t EDITOR_CRC = Lumix::crc32("editor");
-	static const uint32_t CAMERA_CRC = Lumix::crc32("camera");
+static const char* MATERIAL_PATH = "models/raytracer/raytracer.mat";
+static const char* TEXTURE_PATH = "models/raytracer/raytracer.tga";
 
-	struct RayTracerPluginImpl : public RayTracerPlugin
+static const uint32_t RENDERER_CRC = Lumix::crc32("renderer");
+static const uint32_t EDITOR_CRC = Lumix::crc32("editor");
+static const uint32_t CAMERA_CRC = Lumix::crc32("camera");
+
+struct RayTracerPluginImpl : public RayTracerPlugin
+{
+	Lumix::Engine& _engine;
+	Lumix::WorldEditor* _editor;
+
+	Lumix::Material* _material;
+	Lumix::Texture* _texture;
+	Lumix::ComponentUID cameraUid;
+
+	RayTracerSystem rayTracerSystem;
+
+	RayTracerPluginImpl(Lumix::Engine& engine)
+		: _engine(engine),
+		_editor(nullptr),
+		_material(nullptr),
+		_texture(nullptr),
+		cameraUid(Lumix::ComponentUID::INVALID)
+	{ }
+
+	~RayTracerPluginImpl() { }
+
+
+	virtual bool create() override
 	{
-		Lumix::Engine& _engine;
-		Lumix::WorldEditor* _editor;
-		//Lumix::RenderScene* _renderScene;
+		loadMaterial();
+		return true;
+	}
 
-		Lumix::Material* _material;
-		Lumix::Texture* _texture;
-		Lumix::ComponentUID cameraUid;
+	virtual void destroy() override
+	{
+		unloadMaterial();
+		unloadTexture();
+	}
 
-		RayTracerSystem rayTracerSystem;
+	virtual const char* getName() const override
+	{
+		return PLUGIN_NAME;
+	}
 
-		RayTracerPluginImpl(Lumix::Engine& engine)
-			: _engine(engine),
-			_editor(nullptr),
-			_material(nullptr),
-			_texture(nullptr),
-			cameraUid(Lumix::ComponentUID::INVALID)
+	void loadMaterial()
+	{
+		auto* manager = _engine.getResourceManager().get(Lumix::ResourceManager::MATERIAL);
+		Lumix::MaterialManager* mat_manager = static_cast<Lumix::MaterialManager*>(manager);
+
+		auto* resource = mat_manager->load(Lumix::Path(MATERIAL_PATH));
+		_material = static_cast<Lumix::Material*>(resource);
+		_material->onLoaded<RayTracerPluginImpl, &RayTracerPluginImpl::onMaterialLoaded>(this);
+	}
+
+	void unloadMaterial()
+	{
+		if (_material == nullptr) return;
+
+		auto* manager = _engine.getResourceManager().get(Lumix::ResourceManager::MATERIAL);
+		Lumix::MaterialManager* mat_manager = static_cast<Lumix::MaterialManager*>(manager);
+		mat_manager->unload(Lumix::Path(MATERIAL_PATH));
+	}
+
+	void loadTexture()
+	{
+		ASSERT(_material != nullptr);
+		ASSERT(_material->getTextureCount() > 0);
+		if (_texture == _material->getTexture(0)) return;
+
+		_texture = _material->getTexture(0);
+		_texture->addDataReference();
+		_texture->onLoaded<RayTracerPluginImpl, &RayTracerPluginImpl::onTextureLoaded>(this);
+		rayTracerSystem.SetTexture(_texture);
+	}
+
+	void unloadTexture()
+	{
+		if (_texture == nullptr) return;
+
+		_texture->removeDataReference();
+		auto* manager = _engine.getResourceManager().get(Lumix::ResourceManager::TEXTURE);
+		Lumix::TextureManager* tex_manager = static_cast<Lumix::TextureManager*>(manager);
+		tex_manager->unload(Lumix::Path(TEXTURE_PATH));
+	}
+
+
+	void onMaterialLoaded(Lumix::Resource::State, Lumix::Resource::State new_state)
+	{
+		switch (new_state)
 		{
-
+			case Lumix::Resource::State::EMPTY:
+				rayTracerSystem.SetIsReady(false);
+				break;
+			case Lumix::Resource::State::READY:
+				loadTexture();
+				break;
+			default:
+				ASSERT(false);
+				break;
 		}
+	}
 
-		~RayTracerPluginImpl()
+	void onTextureLoaded(Lumix::Resource::State, Lumix::Resource::State new_state)
+	{
+		switch (new_state)
 		{
-
+			case Lumix::Resource::State::EMPTY:
+				rayTracerSystem.SetIsReady(false);
+				break;
+			case Lumix::Resource::State::READY:
+				rayTracerSystem.SetIsReady(true);
+				break;
+			default:
+				ASSERT(false);
+				break;
 		}
+	}
 
 
-		virtual bool create() override
-		{
-			auto* manager = _engine.getResourceManager().get(Lumix::ResourceManager::MATERIAL);
-			Lumix::MaterialManager* mat_manager = static_cast<Lumix::MaterialManager*>(manager);
+	virtual void update(float deltaTime) override
+	{
+		if (_editor == nullptr) return;
 
-			auto* resource = mat_manager->load(Lumix::Path(MATERIAL_PATH));
-			_material = static_cast<Lumix::Material*>(resource);
-			_material->onLoaded<RayTracerPluginImpl, &RayTracerPluginImpl::onMaterialLoaded>(this);
+		updateCamera();
+		rayTracerSystem.Update(deltaTime);
+	}
 
-			return true;
-		}
+	void updateCamera()
+	{
+		auto* renderScene = static_cast<Lumix::RenderScene*>(_editor->getScene(LumixRayTracer::RENDERER_CRC));
 
-		virtual void destroy() override
-		{
-			if (_material != nullptr)
-			{
-				auto* manager = _engine.getResourceManager().get(Lumix::ResourceManager::MATERIAL);
-				Lumix::MaterialManager* mat_manager = static_cast<Lumix::MaterialManager*>(manager);
-				mat_manager->unload(Lumix::Path(MATERIAL_PATH));
-			}
+		Lumix::Vec3 pos = _editor->getUniverse()->getPosition(cameraUid.entity);
+		Lumix::Quat rot = _editor->getUniverse()->getRotation(cameraUid.entity);
+		float fov = renderScene->getCameraFOV(cameraUid.index);
+		float width = renderScene->getCameraWidth(cameraUid.index);
+		float height = renderScene->getCameraHeight(cameraUid.index);
+		float nearPlane = renderScene->getCameraNearPlane(cameraUid.index);
+		float farPlane = renderScene->getCameraFarPlane(cameraUid.index);
+		Lumix::Matrix mat = _editor->getUniverse()->getMatrix(cameraUid.entity);
 
-			if (_texture != nullptr)
-			{
-				_texture->removeDataReference();
-
-				auto* manager = _engine.getResourceManager().get(Lumix::ResourceManager::TEXTURE);
-				Lumix::TextureManager* tex_manager = static_cast<Lumix::TextureManager*>(manager);
-				tex_manager->unload(Lumix::Path(TEXTURE_PATH));
-			}
-		}
-
-		virtual const char* getName() const override
-		{
-			return PLUGIN_NAME;
-		}
+		rayTracerSystem.UpdateCamera(pos, rot, fov, width, height, nearPlane, farPlane, mat);
+	}
 
 
-		void onMaterialLoaded(Lumix::Resource::State, Lumix::Resource::State new_state)
-		{
-			switch (new_state)
-			{
-				case Lumix::Resource::State::EMPTY:
-					rayTracerSystem.SetIsReady(false);
-					break;
-				case Lumix::Resource::State::READY:
-					ASSERT(_material->getTextureCount() > 0);
-					if (_texture != _material->getTexture(0))
-					{
-						_texture = _material->getTexture(0);
-						_texture->addDataReference();
-						_texture->onLoaded<RayTracerPluginImpl, &RayTracerPluginImpl::onTextureLoaded>(this);
-						rayTracerSystem.SetTexture(_texture);
-					}
-					break;
-				default:
-					ASSERT(false);
-					break;
-			}
-		}
+	virtual void setWorldEditor(Lumix::WorldEditor& editor) override
+	{
+		_editor = &editor;
 
-		void onTextureLoaded(Lumix::Resource::State, Lumix::Resource::State new_state)
-		{
-			switch (new_state)
-			{
-				case Lumix::Resource::State::EMPTY:
-					rayTracerSystem.SetIsReady(false);
-					break;
-				case Lumix::Resource::State::READY:
-					rayTracerSystem.SetIsReady(true);
-					break;
-				default:
-					ASSERT(false);
-					break;
-			}
-		}
+		auto* renderScene = static_cast<Lumix::RenderScene*>(editor.getScene(LumixRayTracer::RENDERER_CRC));
 
+		Lumix::Entity camera = renderScene->getCameraEntity(renderScene->getCameraInSlot("editor"));
+		cameraUid = editor.getComponent(camera, LumixRayTracer::CAMERA_CRC);
+	}
 
-		virtual void update(float deltaTime) override
-		{
-			if (_editor == nullptr) return;
+	virtual Lumix::WorldEditor* getWorldEditor()
+	{
+		return _editor;
+	}
 
-			updateCamera();
-			rayTracerSystem.Update(deltaTime);
-		}
-
-		void updateCamera()
-		{
-			auto* renderScene = static_cast<Lumix::RenderScene*>(_editor->getScene(LumixRayTracer::RENDERER_CRC));
-
-			Lumix::Vec3 pos = _editor->getUniverse()->getPosition(cameraUid.entity);
-			Lumix::Quat rot = _editor->getUniverse()->getRotation(cameraUid.entity);
-			float fov = renderScene->getCameraFOV(cameraUid.index);
-			float width = renderScene->getCameraWidth(cameraUid.index);
-			float height = renderScene->getCameraHeight(cameraUid.index);
-			float nearPlane = renderScene->getCameraNearPlane(cameraUid.index);
-			float farPlane = renderScene->getCameraFarPlane(cameraUid.index);
-			Lumix::Matrix mat = _editor->getUniverse()->getMatrix(cameraUid.entity);
-
-			rayTracerSystem.UpdateCamera(pos, rot, fov, width, height, nearPlane, farPlane, mat);
-		}
-
-
-		virtual void setWorldEditor(Lumix::WorldEditor& editor) override
-		{
-			_editor = &editor;
-
-			auto* renderScene = static_cast<Lumix::RenderScene*>(editor.getScene(LumixRayTracer::RENDERER_CRC));
-
-			Lumix::Entity camera = renderScene->getCameraEntity(renderScene->getCameraInSlot("editor"));
-			cameraUid = editor.getComponent(camera, LumixRayTracer::CAMERA_CRC);
-		}
-
-		virtual Lumix::WorldEditor* getWorldEditor()
-		{
-			return _editor;
-		}
-
-		virtual Lumix::Engine& getEngine() override
-		{
-			return _engine;
-		}
-	};
+	virtual Lumix::Engine& getEngine() override
+	{
+		return _engine;
+	}
+};
 
 } // ~namespace LumixRayTracer
 

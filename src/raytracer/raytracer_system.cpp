@@ -31,13 +31,14 @@ void RayTracerSystem::Update(const float &deltaTime)
 	if (!_isReady)
 		return;
 
-	int bpp = _texture->getBytesPerPixel();
+	ASSERT(_texture->getBytesPerPixel() == 4);
+	int width = _texture->getWidth();
+	int height = _texture->getHeight();
 
 	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 0.2f);
 	Ray ray(Vector3(0, 0, 10), Vector3(0, 0, -1));
 	Vector3 intersection;
-	int width = _texture->getWidth();
-	int height = _texture->getHeight();
+	
 
 	for (int y = 0; y < height; ++y)
 	{
@@ -46,7 +47,7 @@ void RayTracerSystem::Update(const float &deltaTime)
 			//ray = camera.getRay(x, y);
 			
 			int index = bpp * (y + x * width);
-			for (int k = 0; k < bpp; ++k)
+			for (int k = 0; k < bpp; ++k)//TODO: loop unwind
 			{
 				//if (Collisions::RayAndSphere(ray, s, intersection))
 					//_texture->getData()[index + k] = 200;
