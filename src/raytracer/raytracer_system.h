@@ -2,38 +2,41 @@
 
 
 #include "lumix.h"
-#include "iplugin.h"
+#include "camera.h"
 
 namespace Lumix
 {
-	class WorldEditor;
+class Texture;
 }
-
 
 namespace LumixRayTracer
 {
 
-static const char* PLUGIN_NAME = "RayTracer";
-
-class LUMIX_LIBRARY_EXPORT RayTracerSystem : public Lumix::IPlugin
+class RayTracerSystem
 {
-	virtual Lumix::WorldEditor* getWorldEditor() = 0;
-	virtual Lumix::Engine& getEngine() = 0;
+private:
+	Camera camera;
+	Lumix::Texture* _texture;
+	bool _isReady = false;
 
 public:
-	virtual void setWorldEditor(Lumix::WorldEditor& editor) = 0;
+	RayTracerSystem();
+	~RayTracerSystem();
+
+	void SetTexture(Lumix::Texture* texture);
+
+	void Update(const float &deltaTime);
+	void UpdateCamera(const Lumix::Vec3 &position,
+										const Lumix::Quat &rotation,
+										const float &fov,
+										const float &width,
+										const float &height,
+										const float &nearPlane,
+										const float &farPlane,
+										const Lumix::Matrix& viewMatrix);
+
+	void SetIsReady(bool isReady);
+	bool GetIsReady();
 };
 
-
 } // ~ namespace LumixRayTracer
-
-
-extern "C"
-{
-	LUMIX_LIBRARY_EXPORT Lumix::IPlugin* createPlugin(Lumix::Engine& engine);
-}
-
-extern "C"
-{
-	LUMIX_LIBRARY_EXPORT void setWorldEditor(Lumix::WorldEditor& editor);
-}

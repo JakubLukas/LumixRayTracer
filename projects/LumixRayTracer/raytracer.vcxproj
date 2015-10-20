@@ -11,13 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\raytracer\raytracer.cpp" />
     <ClCompile Include="..\..\src\raytracer\raytracer_system.cpp" />
+    <ClCompile Include="..\..\src\raytracer\raytracer_plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\camera.h" />
-    <ClInclude Include="..\..\src\raytracer\raytracer.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
+    <ClInclude Include="..\..\src\raytracer\raytracer_plugin.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="math.vcxproj">

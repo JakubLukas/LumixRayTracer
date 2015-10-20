@@ -25,4 +25,24 @@ Vector4::Vector4(Lumix::Vec4 v)
 {
 }
 
+Vector4& Vector4::operator *= (const float &f)
+{
+	x *= f;
+	y *= f;
+	z *= f;
+	w *= f;
+
+	return *this;
+}
+
+Vector4 operator *(const float &f, Vector4 v)
+{
+	return v *= f;
+}
+
+Vector4 operator *(Vector4 v, const float &f)
+{
+	return v *= f;
+}
+
 } // ~ namespace LumixRayTracer
