@@ -34,26 +34,28 @@ void RayTracerSystem::Update(const float &deltaTime)
 	ASSERT(_texture->getBytesPerPixel() == 4);
 	int width = _texture->getWidth();
 	int height = _texture->getHeight();
+	uint32_t* data = (uint32_t*)(_texture->getData());
 
 	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 0.2f);
-	Ray ray(Vector3(0, 0, 10), Vector3(0, 0, -1));
+	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
 	Vector3 intersection;
 	
-
-	for (int y = 0; y < height; ++y)
+	float deltaX = 1.0f / width;
+	float deltaY = 1.0f / height;
+	float relX = 0.0f;
+	float relY = height;
+	for (int y = 0; y < height; ++y, relX += deltaX)
 	{
-		for (int x = 0; x < width; ++x)
+		for (int x = 0; x < width; ++x, relY -= deltaY)
 		{
-			//ray = camera.getRay(x, y);
+			camera.getRay(relX, relY, ray);
 			
-			int index = bpp * (y + x * width);
-			for (int k = 0; k < bpp; ++k)//TODO: loop unwind
-			{
-				//if (Collisions::RayAndSphere(ray, s, intersection))
-					//_texture->getData()[index + k] = 200;
-				//else
-					_texture->getData()[index + k] = 0;
-			}
+			int index = (y + x * width);
+			uint8_t tmp[4] = { (uint8_t)(ray.Direction.x * 255),
+				(uint8_t)(ray.Direction.y * 255),
+				(uint8_t)(ray.Direction.z * 255),
+				0xFF };
+			data[index] = *(uint32_t*)(tmp);
 		}
 	}
 	_texture->onDataUpdated(0, 0, width, height);
@@ -76,6 +78,7 @@ void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
 	camera.NearPlane = nearPlane;
 	camera.FarPlane = farPlane;
 	camera.ViewMatrix = viewMatrix;
+	camera.OnChanged();
 }
 
 void RayTracerSystem::SetIsReady(bool isReady)
