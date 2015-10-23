@@ -15,8 +15,8 @@ namespace LumixRayTracer
 struct Camera
 {
 private:
-	Matrix44 _projectionMatrix;
-
+	float _fovTan;
+	float _ratio;
 public:
 	Vector3 Position;
 	Quaternion Rotation;
@@ -34,37 +34,25 @@ public:
 
 	void getRay(float x, float y, Ray &ray)
 	{
-		//float nx = 2.0f * (x / Width) - 1.0f;
-		//float ny = 2.0f * ((Height - y) / Height) - 1.0f;
+		float px = (2.0f * x - 1.0f) * _fovTan * _ratio;
+		float py = (1.0f - 2.0f * y) * _fovTan;
 
-		//Matrix44 tmp = ViewMatrix;
-		//tmp.inverse();
-		Matrix44 inverted = (_projectionMatrix /** tmp*/);
-		inverted.inverse();
-		Vector4 p0 = inverted * Vector4(x, y, -1, 1);
-		Vector4 p1 = inverted * Vector4(x, y, 1, 1);
-		p0.x /= p0.w;
-		p0.y /= p0.w;
-		p0.z /= p0.w;
-		p1.x /= p1.w;
-		p1.y /= p1.w;
-		p1.z /= p1.w;
-
-		ray.Direction.x = p1.x - p0.x;
-		ray.Direction.y = p1.y - p0.y;
-		ray.Direction.z = p1.z - p0.z;
+		ray.Direction.x = px;// - Position.x;
+		ray.Direction.y = py;// - Position.y;
+		ray.Direction.z = -1.0f;// - Position.z;
 		ray.Direction.normalize();
 
-		//ray.Position = Position;
-		//ray.Direction = Vector3(0.0f, 0.0f, -1.0f);
+		ray.Position.x = 0.0f;// Position.x;
+		ray.Position.y = 0.0f;// Position.y;
+		ray.Position.z = 0.0f;// Position.z;
 	}
 
 	void OnChanged()
 	{
 		FOV = Math::RadFromDeg(FOV);
+		_fovTan = Math::Tan(FOV);
 
-		float ratio = Width / Height;
-		_projectionMatrix.setPerspective(FOV, ratio, NearPlane, FarPlane);
+		_ratio = Width / Height;
 	}
 };
 

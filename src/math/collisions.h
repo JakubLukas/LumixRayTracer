@@ -10,7 +10,7 @@ struct Sphere;
 namespace Collisions
 {
 
-bool RayAndSphere(Ray ray, Sphere sphere, Vector3 &intersection);
+bool RayAndSphere(const Ray &ray, const Sphere &sphere, Vector3 &intersection);
 
 } // ~ namespace Collisions
 

@@ -11,14 +11,13 @@ namespace LumixRayTracer
 namespace Collisions
 {
 
-bool Collisions::RayAndSphere(Ray ray, Sphere sphere, Vector3 &intersection)
+bool Collisions::RayAndSphere(const Ray &ray, const Sphere &sphere, Vector3 &intersection)
 {
 	Vector3 vpc = sphere.Position - ray.Position;
 
 	if (Vector3::Dot(vpc, ray.Direction) < 0.0f) // when the sphere is behind the origin p
 	{
-		// note that this case may be dismissed if it is 
-		// considered that p is outside the sphere 	
+		// note that this case may be dismissed if it is considered that p is outside the sphere 	
 		if (vpc.length() > sphere.Radius)
 		{
 			return false;// there is no intersection
@@ -31,7 +30,7 @@ bool Collisions::RayAndSphere(Ray ray, Sphere sphere, Vector3 &intersection)
 		{
 			Vector3 pc = ray.Position + ray.Direction * Vector3::Dot(ray.Direction, vpc) / ray.Direction.length();//projection of c on the line
 				// distance from pc to i1
-			float dist = Math::Sqrt(Math::Pow(sphere.Radius, 2.0f) - Math::Pow((pc - sphere.Position).length(), 2.0f));
+			float dist = Math::Sqrt(sphere.Radius*sphere.Radius - (pc - sphere.Position).length()*(pc - sphere.Position).length());
 			float di1 = dist - (pc - ray.Position).length();
 			intersection = ray.Position + ray.Direction * di1;
 		}

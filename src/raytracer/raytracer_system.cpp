@@ -36,27 +36,33 @@ void RayTracerSystem::Update(const float &deltaTime)
 	int height = _texture->getHeight();
 	uint32_t* data = (uint32_t*)(_texture->getData());
 
-	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 0.2f);
+	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 1.2f);
 	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
 	Vector3 intersection;
 	
 	float deltaX = 1.0f / width;
 	float deltaY = 1.0f / height;
 	float relX = 0.0f;
-	float relY = height;
-	for (int y = 0; y < height; ++y, relX += deltaX)
+	float relY = 1.0f - deltaY;
+
+	int index = 0;
+
+	for (int y = 0; y < height; ++y)
 	{
-		for (int x = 0; x < width; ++x, relY -= deltaY)
+		relX = 0.0f;
+		index = y * height;
+		for (int x = 0; x < width; ++x)
 		{
 			camera.getRay(relX, relY, ray);
-			
-			int index = (y + x * width);
-			uint8_t tmp[4] = { (uint8_t)(ray.Direction.x * 255),
-				(uint8_t)(ray.Direction.y * 255),
-				(uint8_t)(ray.Direction.z * 255),
-				0xFF };
-			data[index] = *(uint32_t*)(tmp);
+			if (Collisions::RayAndSphere(ray, s, intersection))
+				data[index] = 0xFFFFFFFF;
+			else
+				data[index] = 0x000000FF;
+
+			++index;
+			relX += deltaX;
 		}
+		relY -= deltaY;
 	}
 	_texture->onDataUpdated(0, 0, width, height);
 }

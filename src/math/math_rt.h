@@ -7,11 +7,15 @@ namespace Math
 {
 const float PI = 3.1415926535897932384626433832795f;
 
-float RadFromDeg(const float &degrees);
-float DegFromRad(const float &radians);
+float RadFromDeg(const float degrees);
+float DegFromRad(const float radians);
 
-float Pow(const float &number, const float &exponent);
-float Sqrt(const float &number);
+float Pow(const float number, const float exponent);
+float Sqrt(const float number);
+
+float Abs(const float number);
+
+float Tan(const float angle);
 
 } // ~ namespace Math
 
