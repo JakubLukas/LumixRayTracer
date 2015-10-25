@@ -13,6 +13,8 @@ struct Quaternion : public Lumix::Quat
 	Quaternion(const Vector3& axis, float angle);
 	Quaternion(float a, float b, float c, float d);
 	Quaternion(Lumix::Quat v);
+
+	Vector3 operator *(const Vector3& v) const;
 };
 
 } // ~ namespace LumixRayTracer

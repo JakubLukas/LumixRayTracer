@@ -11,13 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\raytracer\collisions\collisions.cpp" />
     <ClCompile Include="..\..\src\raytracer\raytracer_system.cpp" />
     <ClCompile Include="..\..\src\raytracer\raytracer_plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\camera.h" />
+    <ClInclude Include="..\..\src\raytracer\collisions\collisions.h" />
+    <ClInclude Include="..\..\src\raytracer\lightning\directional_light.h" />
+    <ClInclude Include="..\..\src\raytracer\lightning\light.h" />
+    <ClInclude Include="..\..\src\raytracer\primitives\primitive.h" />
+    <ClInclude Include="..\..\src\raytracer\primitives\sphere.h" />
+    <ClInclude Include="..\..\src\raytracer\ray.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_plugin.h" />
+    <ClInclude Include="..\..\src\raytracer\ray_hit.h" />
+    <ClInclude Include="..\..\src\raytracer\shading\phong_shader.h" />
+    <ClInclude Include="..\..\src\raytracer\shading\shader.h" />
+    <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h" />
+    <ClInclude Include="..\..\src\raytracer\texturing\sampler.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="math.vcxproj">
@@ -64,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>..\..\..\LumixEngine\src;..\..\..\LumixEngine\src\engine;..\..\..\LumixEngine\src\editor;..\..\..\LumixEngine\external\bgfx\include;..\..\src\math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\LumixEngine\src;..\..\..\LumixEngine\src\engine;..\..\..\LumixEngine\src\editor;..\..\..\LumixEngine\external\bgfx\include;..\..\src\math;..\..\src\raytracer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;BUILDING_RAYTRACER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

@@ -3,10 +3,59 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\raytracer\raytracer_plugin.cpp" />
     <ClCompile Include="..\..\src\raytracer\raytracer_system.cpp" />
+    <ClCompile Include="..\..\src\raytracer\collisions\collisions.cpp">
+      <Filter>collisions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\camera.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_plugin.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
+    <ClInclude Include="..\..\src\raytracer\shading\shader.h">
+      <Filter>shading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\shading\phong_shader.h">
+      <Filter>shading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h">
+      <Filter>texturing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\texturing\sampler.h">
+      <Filter>texturing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\lightning\directional_light.h">
+      <Filter>lightning</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\lightning\light.h">
+      <Filter>lightning</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\primitives\primitive.h">
+      <Filter>primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\primitives\sphere.h">
+      <Filter>primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\collisions\collisions.h">
+      <Filter>collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\ray.h" />
+    <ClInclude Include="..\..\src\raytracer\ray_hit.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shading">
+      <UniqueIdentifier>{0909b720-a7df-4743-8f26-71224f15ae2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="texturing">
+      <UniqueIdentifier>{d20c2fd8-474c-4997-942b-4363d51468a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lightning">
+      <UniqueIdentifier>{ed6ee6a4-b165-4843-bf92-e8fb6d919229}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="primitives">
+      <UniqueIdentifier>{98259325-121b-49b3-9b7f-34c32855c78e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="collisions">
+      <UniqueIdentifier>{d3b36caf-b1c8-455f-8005-d5b005b72790}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
