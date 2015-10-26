@@ -40,6 +40,7 @@
     </ClInclude>
     <ClInclude Include="..\..\src\raytracer\ray.h" />
     <ClInclude Include="..\..\src\raytracer\ray_hit.h" />
+    <ClInclude Include="..\..\src\raytracer\object.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shading">

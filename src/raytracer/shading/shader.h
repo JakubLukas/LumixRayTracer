@@ -13,7 +13,6 @@ public:
 	{
 		return Vector3();
 	}
-
 };
 
 } // ~ namespace LumixRayTracer

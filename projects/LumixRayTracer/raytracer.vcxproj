@@ -20,6 +20,7 @@
     <ClInclude Include="..\..\src\raytracer\collisions\collisions.h" />
     <ClInclude Include="..\..\src\raytracer\lightning\directional_light.h" />
     <ClInclude Include="..\..\src\raytracer\lightning\light.h" />
+    <ClInclude Include="..\..\src\raytracer\object.h" />
     <ClInclude Include="..\..\src\raytracer\primitives\primitive.h" />
     <ClInclude Include="..\..\src\raytracer\primitives\sphere.h" />
     <ClInclude Include="..\..\src\raytracer\ray.h" />

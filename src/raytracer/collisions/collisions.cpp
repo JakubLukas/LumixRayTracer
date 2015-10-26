@@ -11,7 +11,7 @@ namespace LumixRayTracer
 namespace Collisions
 {
 
-bool Collisions::RayAndSphere(const Ray &ray, const Sphere &sphere, Vector3 &intersection)
+bool Collisions::RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection)
 {
 	Vector3 vpc = sphere.Position - ray.Position;
 

@@ -1,23 +1,23 @@
 #pragma once
 
+#include "object.h"
 #include "vector3.h"
 
 
 namespace LumixRayTracer
 {
 
-class Primitive
+class Primitive : public Object
 {
 public:
-	Vector3 Position;
 
 	Primitive()
-		: Position(0.0f, 0.0f, 0.0f)
+		: _position(0.0f, 0.0f, 0.0f)
 	{
 	}
 
 	Primitive(const Vector3 position)
-		: Position(position)
+		: _position(position)
 	{
 	}
 };

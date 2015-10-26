@@ -20,7 +20,7 @@ public:
 
 	virtual Vector3 GetColor(const Vector3 &point, const Vector3 &normal, const Vector3 &camera, const Vector3 &light) override
 	{
-
+		return _diffuseSampler.GetSample();
 	}
 
 };
