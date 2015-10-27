@@ -3,7 +3,7 @@
 
 namespace LumixRayTracer
 {
-class Vector3;
+struct Vector3;
 
 class Sampler
 {

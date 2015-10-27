@@ -10,25 +10,27 @@ namespace LumixRayTracer
 
 class PhongShader : public Shader
 {
-private:
-	Sampler* _diffuseSampler;
+public:
+	Sampler* DiffuseSampler;
 
 public:
-	PhongShader()
-		: _diffuseSampler(nullptr)
+	PhongShader(Sampler *diffuse)
+		: DiffuseSampler(diffuse)
 	{
-		_diffuseSampler = new ColorSampler(Vector3(1.0f, 1.0f, 1.0f));
 	}
+
 	~PhongShader()
 	{
-		delete _diffuseSampler;
+		delete DiffuseSampler;
 	}
 
 	virtual Vector3 GetColor(const Vector3 &point, const Vector3 &normal, const Vector3 &camera, const Vector3 &light) override
 	{
+		ASSERT(DiffuseSampler != nullptr);
+
 		Vector3 l = (light - point).normalized();
 		float lDotN = Vector3::Dot(l, normal);
-		return _diffuseSampler->GetSample(0, 0) * lDotN;
+		return DiffuseSampler->GetSample(0, 0) * lDotN;
 	}
 
 };

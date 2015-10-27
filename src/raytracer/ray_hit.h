@@ -2,7 +2,7 @@
 
 #include "lumix.h"
 #include "vector3.h"
-#include "object.h"
+#include "model.h"
 
 
 namespace LumixRayTracer
@@ -12,7 +12,7 @@ struct RayHit
 {
 	Vector3 Position;
 	Vector3 Normal;
-	Object* HitObject;
+	Model* HitObject;
 };
 
 } // ~ namespace LumixRayTracer

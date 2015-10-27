@@ -40,8 +40,11 @@
     </ClInclude>
     <ClInclude Include="..\..\src\raytracer\ray.h" />
     <ClInclude Include="..\..\src\raytracer\ray_hit.h" />
-    <ClInclude Include="..\..\src\raytracer\object.h" />
     <ClInclude Include="..\..\src\raytracer\material.h" />
+    <ClInclude Include="..\..\src\raytracer\model.h" />
+    <ClInclude Include="..\..\src\raytracer\voxels\voxel_model.h">
+      <Filter>voxels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shading">
@@ -58,6 +61,9 @@
     </Filter>
     <Filter Include="collisions">
       <UniqueIdentifier>{d3b36caf-b1c8-455f-8005-d5b005b72790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="voxels">
+      <UniqueIdentifier>{a845f361-cda5-43e0-a785-1b8e5b8cd396}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@
     <ClInclude Include="..\..\src\raytracer\lightning\directional_light.h" />
     <ClInclude Include="..\..\src\raytracer\lightning\light.h" />
     <ClInclude Include="..\..\src\raytracer\material.h" />
-    <ClInclude Include="..\..\src\raytracer\object.h" />
+    <ClInclude Include="..\..\src\raytracer\model.h" />
     <ClInclude Include="..\..\src\raytracer\primitives\primitive.h" />
     <ClInclude Include="..\..\src\raytracer\primitives\sphere.h" />
     <ClInclude Include="..\..\src\raytracer\ray.h" />
@@ -32,6 +32,7 @@
     <ClInclude Include="..\..\src\raytracer\shading\shader.h" />
     <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h" />
     <ClInclude Include="..\..\src\raytracer\texturing\sampler.h" />
+    <ClInclude Include="..\..\src\raytracer\voxels\voxel_model.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="math.vcxproj">

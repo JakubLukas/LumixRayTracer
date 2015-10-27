@@ -1,8 +1,6 @@
 #pragma once
 
-#include "lumix.h"
-#include "core/iallocator.h"
-#include "renderer/material_manager.h"
+#include "Debug/allocator.h"
 
 #include "camera.h"
 
@@ -14,15 +12,18 @@ class Texture;
 
 namespace LumixRayTracer
 {
+class Material;
 
 class RayTracerSystem
 {
 private:
-	Lumix::MaterialManager m_material_manager;
+	Lumix::Debug::Allocator _allocator;
 
-	Camera camera;
+	Camera _camera;
 	Lumix::Texture* _texture;
 	bool _isReady = false;
+
+	Material* _objectMaterial;
 
 public:
 	RayTracerSystem(Lumix::IAllocator& allocator);

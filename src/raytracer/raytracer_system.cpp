@@ -16,14 +16,17 @@ namespace LumixRayTracer
 {
 
 RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
-	: m_material_manager(allocator)
+	: _allocator(allocator)
 {
-
+	ColorSampler* sampl = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));
+	PhongShader* shad = LUMIX_NEW(_allocator, PhongShader)(sampl);
+	_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
 }
 
 RayTracerSystem::~RayTracerSystem()
 {
-
+	LUMIX_DELETE(_allocator, _objectMaterial->MaterialShader);
+	LUMIX_DELETE(_allocator, _objectMaterial);
 }
 
 void RayTracerSystem::SetTexture(Lumix::Texture* texture)
@@ -42,9 +45,7 @@ void RayTracerSystem::Update(const float &deltaTime)
 	uint32_t* data = (uint32_t*)(_texture->getData());
 
 	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 1.2f);
-	Shader* shad = new PhongShader();
-	Material* mat = new Material(shad);
-	s.ObjMaterial = mat;
+	s.ObjMaterial = _objectMaterial;
 
 
 	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
@@ -63,11 +64,10 @@ void RayTracerSystem::Update(const float &deltaTime)
 		index = y * height;
 		for (int x = 0; x < width; ++x)
 		{
-			camera.GetRay(relX, relY, ray);
+			_camera.GetRay(relX, relY, ray);
 			if (Intersections::RayAndSphere(ray, s, intersection))
 			{
-				data[index] = 0xFFFFFFFF;
-				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, camera.Position, camera.Position);
+				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
 				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}
@@ -84,10 +84,6 @@ void RayTracerSystem::Update(const float &deltaTime)
 		relY -= deltaY;
 	}
 	_texture->onDataUpdated(0, 0, width, height);
-
-	//TODO get rid of this bullshit
-	delete shad;
-	delete mat;
 }
 
 void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
@@ -99,14 +95,14 @@ void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
 														 const float &farPlane,
 														 const Lumix::Matrix& viewMatrix)
 {
-	camera.Position = position;
-	camera.Rotation = rotation;
-	camera.FOV = fov;
-	camera.Width = width;
-	camera.Height = height;
-	camera.NearPlane = nearPlane;
-	camera.FarPlane = farPlane;
-	camera.OnChanged();
+	_camera.Position = position;
+	_camera.Rotation = rotation;
+	_camera.FOV = fov;
+	_camera.Width = width;
+	_camera.Height = height;
+	_camera.NearPlane = nearPlane;
+	_camera.FarPlane = farPlane;
+	_camera.OnChanged();
 }
 
 void RayTracerSystem::SetIsReady(bool isReady)

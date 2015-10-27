@@ -61,7 +61,8 @@ struct RayTracerPluginImpl : public RayTracerPlugin
 		_editor(nullptr),
 		_material(nullptr),
 		_texture(nullptr),
-		cameraUid(Lumix::ComponentUID::INVALID)
+		cameraUid(Lumix::ComponentUID::INVALID),
+		rayTracerSystem(engine.getAllocator())
 	{ }
 
 	~RayTracerPluginImpl() { }

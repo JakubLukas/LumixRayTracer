@@ -7,14 +7,14 @@ namespace LumixRayTracer
 {
 class Material;
 
-class Object
+class Model
 {
 public:
 	Material* ObjMaterial;
 	Vector3 Position;
 
 public:
-	Object()
+	Model()
 		: Position(0.0f, 0.0f, 0.0f)
 	{}
 
