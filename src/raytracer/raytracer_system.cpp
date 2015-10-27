@@ -2,16 +2,21 @@
 
 #include "vector3.h"
 #include "ray.h"
-#include "sphere.h"
-#include "collisions.h"
+#include "ray_hit.h"
+#include "primitives/sphere.h"
+#include "collisions/collisions.h"
 
 #include "renderer/texture.h"
+
+#include "material.h"
+#include "shading/phong_shader.h"
 
 
 namespace LumixRayTracer
 {
 
-RayTracerSystem::RayTracerSystem()
+RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
+	: m_material_manager(allocator)
 {
 
 }
@@ -37,13 +42,18 @@ void RayTracerSystem::Update(const float &deltaTime)
 	uint32_t* data = (uint32_t*)(_texture->getData());
 
 	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 1.2f);
+	Shader* shad = new PhongShader();
+	Material* mat = new Material(shad);
+	s.ObjMaterial = mat;
+
+
 	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
-	Vector3 intersection;
+	RayHit intersection;
 	
 	float deltaX = 1.0f / width;
 	float deltaY = 1.0f / height;
 	float relX = 0.0f;
-	float relY = 1.0f - deltaY;
+	float relY = 1.0f;
 
 	int index = 0;
 
@@ -53,11 +63,20 @@ void RayTracerSystem::Update(const float &deltaTime)
 		index = y * height;
 		for (int x = 0; x < width; ++x)
 		{
-			camera.getRay(relX, relY, ray);
-			if (Collisions::RayAndSphere(ray, s, intersection))
+			camera.GetRay(relX, relY, ray);
+			if (Intersections::RayAndSphere(ray, s, intersection))
+			{
 				data[index] = 0xFFFFFFFF;
+				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, camera.Position, camera.Position);
+				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
+				data[index] = *(uint32_t*)(tmp);
+			}
 			else
-				data[index] = 0x000000FF;
+			{
+				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 255), (uint8_t)(Math::Abs(ray.Direction.y) * 255), (uint8_t)(Math::Abs(ray.Direction.z) * 255), 0xFF };
+				data[index] = *(uint32_t*)(tmp);
+			}
+			
 
 			++index;
 			relX += deltaX;
@@ -65,6 +84,10 @@ void RayTracerSystem::Update(const float &deltaTime)
 		relY -= deltaY;
 	}
 	_texture->onDataUpdated(0, 0, width, height);
+
+	//TODO get rid of this bullshit
+	delete shad;
+	delete mat;
 }
 
 void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
@@ -83,7 +106,6 @@ void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
 	camera.Height = height;
 	camera.NearPlane = nearPlane;
 	camera.FarPlane = farPlane;
-	camera.ViewMatrix = viewMatrix;
 	camera.OnChanged();
 }
 

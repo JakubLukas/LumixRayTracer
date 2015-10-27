@@ -20,7 +20,6 @@ private:
 public:
 	Vector3 Position;
 	Quaternion Rotation;
-	Matrix44 ViewMatrix;
 	float FOV;
 	float Width;
 	float Height;
@@ -32,19 +31,15 @@ public:
 		Rotation(0.0f, 0.0f, 0.0f, 1.0f)
 	{}
 
-	void getRay(float x, float y, Ray &ray)
+	void GetRay(float x, float y, Ray &ray)
 	{
 		float px = (2.0f * x - 1.0f) * _fovTan * _ratio;
 		float py = (1.0f - 2.0f * y) * _fovTan;
 
-		ray.Direction.x = px;// - Position.x;
-		ray.Direction.y = py;// - Position.y;
-		ray.Direction.z = -1.0f;// - Position.z;
+		ray.Direction = Rotation * Vector3(px, py, -1.0f);
 		ray.Direction.normalize();
 
-		ray.Position.x = 0.0f;// Position.x;
-		ray.Position.y = 0.0f;// Position.y;
-		ray.Position.z = 0.0f;// Position.z;
+		ray.Position = Position;
 	}
 
 	void OnChanged()
