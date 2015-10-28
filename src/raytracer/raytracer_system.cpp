@@ -10,6 +10,7 @@
 
 #include "material.h"
 #include "shading/phong_shader.h"
+#include "voxels/voxel_model.h"
 
 
 namespace LumixRayTracer
@@ -21,6 +22,8 @@ RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
 	ColorSampler* sampl = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));
 	PhongShader* shad = LUMIX_NEW(_allocator, PhongShader)(sampl);
 	_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
+
+	_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
 }
 
 RayTracerSystem::~RayTracerSystem()

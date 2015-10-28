@@ -6,6 +6,9 @@
     <ClCompile Include="..\..\src\raytracer\collisions\collisions.cpp">
       <Filter>collisions</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\raytracer\voxels\voxel_model.cpp">
+      <Filter>voxels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\camera.h" />

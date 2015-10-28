@@ -13,6 +13,7 @@ class Texture;
 namespace LumixRayTracer
 {
 class Material;
+class VoxelModel;
 
 class RayTracerSystem
 {
@@ -24,6 +25,7 @@ private:
 	bool _isReady = false;
 
 	Material* _objectMaterial;
+	VoxelModel* _voxelWord;
 
 public:
 	RayTracerSystem(Lumix::IAllocator& allocator);
