@@ -4,6 +4,7 @@
 #include "ray.h"
 #include "ray_hit.h"
 #include "primitives/sphere.h"
+#include "primitives/box.h"
 #include "collisions/collisions.h"
 
 #include "renderer/texture.h"
@@ -49,7 +50,8 @@ void RayTracerSystem::Update(const float &deltaTime)
 
 	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 1.2f);
 	s.ObjMaterial = _objectMaterial;
-
+	Box b(Vector3(0.0f, 0.0f, -2.0f), Vector3(1.0f, 1.0f, 1.0f));
+	b.ObjMaterial = _objectMaterial;
 
 	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
 	RayHit intersection;
@@ -68,7 +70,7 @@ void RayTracerSystem::Update(const float &deltaTime)
 		for (int x = 0; x < width; ++x)
 		{
 			_camera.GetRay(relX, relY, ray);
-			if (Intersections::RayAndSphere(ray, s, intersection))
+			if (Intersections::RayAndBox(ray, b, intersection))
 			{
 				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
 				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };

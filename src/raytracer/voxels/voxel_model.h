@@ -21,6 +21,7 @@ public:
 
 private:
 	void SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z, const uint8_t value);
+public:
 	uint8_t GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const;
 
 };
