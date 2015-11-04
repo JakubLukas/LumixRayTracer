@@ -51,6 +51,9 @@
     <ClInclude Include="..\..\src\raytracer\primitives\box.h">
       <Filter>primitives</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\voxels\bresenham_full.h">
+      <Filter>voxels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shading">

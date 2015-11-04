@@ -112,11 +112,59 @@ bool Intersections::RayAndBox(const Ray &ray, const Box &box, RayHit &intersecti
 	return true;
 }
 
+bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, Vector3 &intersection)
+{
+	// r.dir is unit direction vector of ray
+	Vector3 dirfrac(1.0f / ray.Direction.x, 1.0f / ray.Direction.y, 1.0f / ray.Direction.z);
+
+	const Vector3 boxMax = model.GetMaxPoint();
+	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+	// r.org is origin of ray
+	float t1 = (model.Position.x - ray.Position.x) * dirfrac.x;
+	float t2 = (boxMax.x - ray.Position.x) * dirfrac.x;
+	float t3 = (model.Position.y - ray.Position.y) * dirfrac.y;
+	float t4 = (boxMax.y - ray.Position.y) * dirfrac.y;
+	float t5 = (model.Position.z - ray.Position.z) * dirfrac.z;
+	float t6 = (boxMax.z - ray.Position.z) * dirfrac.z;
+
+	float tmin = Math::Max(Math::Max(Math::Min(t1, t2), Math::Min(t3, t4)), Math::Min(t5, t6));
+	float tmax = Math::Min(Math::Min(Math::Max(t1, t2), Math::Max(t3, t4)), Math::Max(t5, t6));
+
+	// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
+	if (tmax < 0)
+	{
+		return false;
+	}
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (tmin > tmax)
+	{
+		return false;
+	}
+
+	intersection = model.Position + ray.Direction * tmin;
+	return true;
+}
+
 bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, bool(*func_pointer)(uint8_t))
 {
-	int tMaxX = 0;
-	int tMaxY = 0;
-	int tMaxZ = 0;
+	Vector3 voxelModelIntersection;
+	if (!RayAndVoxelModel(ray, box, voxelModelIntersection))
+		return false;
+
+	Vector3 relVoxIntersect = (voxelModelIntersection - box.Position);
+	int X = int(relVoxIntersect.x / VoxelModel::VOXEL_SIZE_X);
+	int Y = int(relVoxIntersect.y / VoxelModel::VOXEL_SIZE_Y);
+	int Z = int(relVoxIntersect.z / VoxelModel::VOXEL_SIZE_Z);
+
+	int stepX = (ray.Direction.x <= 0.0f) ? 1 : -1;
+	int stepY = (ray.Direction.y <= 0.0f) ? 1 : -1;
+	int stepZ = (ray.Direction.z <= 0.0f) ? 1 : -1;
+
+	float tMaxX = (box.Position.x - ray.Position.x) / ray.Direction.x;
+	float tMaxY = (box.Position.y - ray.Position.y) / ray.Direction.y;
+	float tMaxZ = (box.Position.z - ray.Position.z) / ray.Direction.z;
+
 	for (;;)
 	{
 		if (tMaxX < tMaxY)
@@ -124,16 +172,16 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, bool(*func_pointer)(
 			if (tMaxX < tMaxZ)
 			{
 				X = X + stepX;
-				if (X == justOutX)
-					return(NIL); /* outside grid */
-				tMaxX = tMaxX + tDeltaX;
+				if (X >= box.GetSizeX())
+					return false; // outside grid
+				tMaxX = tMaxX + VoxelModel::VOXEL_SIZE_X;
 			}
 			else
 			{
 				Z = Z + stepZ;
-				if (Z == justOutZ)
-					return(NIL);
-				tMaxZ = tMaxZ + tDeltaZ;
+				if (Z == box.GetSizeZ())
+					return false; // outside grid
+				tMaxZ = tMaxZ + VoxelModel::VOXEL_SIZE_Z;
 			}
 		}
 		else
@@ -141,19 +189,19 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, bool(*func_pointer)(
 			if (tMaxY < tMaxZ)
 			{
 				Y = Y + stepY;
-				if (Y == justOutY)
-					return(NIL);
-				tMaxY = tMaxY + tDeltaY;
+				if (Y == box.GetSizeY())
+					return false; // outside grid
+				tMaxY = tMaxY + VoxelModel::VOXEL_SIZE_Y;
 			}
 			else
 			{
 				Z = Z + stepZ;
-				if (Z == justOutZ)
-					return(NIL);
-				tMaxZ = tMaxZ + tDeltaZ;
+				if (Z == box.GetSizeZ())
+					return false; // outside grid
+				tMaxZ = tMaxZ + VoxelModel::VOXEL_SIZE_Z;
 			}
 		}
-		if (func_pointer(box.GetVoxel(0, 0, 0)))
+		if (func_pointer(box.GetVoxel(X, Y, Z)))
 			return true;
 	}
 }

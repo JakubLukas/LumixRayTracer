@@ -34,6 +34,7 @@
     <ClInclude Include="..\..\src\raytracer\shading\shader.h" />
     <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h" />
     <ClInclude Include="..\..\src\raytracer\texturing\sampler.h" />
+    <ClInclude Include="..\..\src\raytracer\voxels\bresenham_full.h" />
     <ClInclude Include="..\..\src\raytracer\voxels\voxel_model.h" />
   </ItemGroup>
   <ItemGroup>
