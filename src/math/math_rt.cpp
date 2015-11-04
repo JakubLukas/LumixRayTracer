@@ -29,6 +29,16 @@ float Sqrt(const float number)
 	return sqrt(number);
 }
 
+float Min(float a, float b)
+{
+	return a < b ? a : b;
+}
+
+float Max(float a, float b)
+{
+	return a < b ? b : a;
+}
+
 float Abs(const float number)
 {
 	return abs(number);

@@ -7,19 +7,19 @@
 namespace LumixRayTracer
 {
 
-struct Sphere : public Primitive
+struct Box : public Primitive
 {
-	float Radius;
+	Vector3 Size;
 
-	Sphere()
+	Box()
 		: Primitive(Vector3(0.0f, 0.0f, 0.0f)),
-		Radius(1.0f)
+		Size(1.0f, 1.0f, 1.0f)
 	{
 	}
 
-	Sphere(const Vector3 &origin, const float radius)
+	Box(const Vector3 &origin, const Vector3 &size)
 		: Primitive(origin),
-		Radius(radius)
+		Size(size)
 	{
 	}
 };

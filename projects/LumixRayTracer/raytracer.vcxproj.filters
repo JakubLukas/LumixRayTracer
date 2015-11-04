@@ -48,6 +48,9 @@
     <ClInclude Include="..\..\src\raytracer\voxels\voxel_model.h">
       <Filter>voxels</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\raytracer\primitives\box.h">
+      <Filter>primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shading">
