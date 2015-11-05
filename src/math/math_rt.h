@@ -13,9 +13,13 @@ float DegFromRad(const float radians);
 float Pow(const float number, const float exponent);
 float Sqrt(const float number);
 
-float Min(float a, float b);
-float Max(float a, float b);
+float Min(const float a, const float b);
+float Max(const float a, const float b);
+float Min(const float a, const float b, const float c);
+float Max(const float a, const float b, const float c);
 float Abs(const float number);
+
+float Mod(const float numer, const float denom);
 
 float Tan(const float angle);
 

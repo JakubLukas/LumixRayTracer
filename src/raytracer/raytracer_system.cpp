@@ -56,7 +56,8 @@ void RayTracerSystem::Update(const float &deltaTime)
 	m.ObjMaterial = _objectMaterial;
 
 	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
-	RayHit intersection;
+	//RayHit intersection;
+	Vector3 intersection;
 	
 	float deltaX = 1.0f / width;
 	float deltaY = 1.0f / height;
@@ -72,31 +73,31 @@ void RayTracerSystem::Update(const float &deltaTime)
 		for (int x = 0; x < width; ++x)
 		{
 			_camera.GetRay(relX, relY, ray);
-			/*if (Intersections::RayAndBox(ray, b, intersection))
+			if (Intersections::RayAndVoxelModel(ray, m, intersection))
 			{
-				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
-				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
+				//Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
+				uint8_t tmp[4] = { (uint8_t)(intersection.x * 255), (uint8_t)(intersection.y * 255), (uint8_t)(intersection.z * 255), 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}
 			else
 			{
 				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 255), (uint8_t)(Math::Abs(ray.Direction.y) * 255), (uint8_t)(Math::Abs(ray.Direction.z) * 255), 0xFF };
 				data[index] = *(uint32_t*)(tmp);
-			}*/
+			}
 
-			Intersections::RayAndVoxelGrid(ray, m, [&](uint8_t type) -> bool {
-				if (type == 0)
+			/*uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 255), (uint8_t)(Math::Abs(ray.Direction.y) * 255), (uint8_t)(Math::Abs(ray.Direction.z) * 255), 0xFF };
+			data[index] = *(uint32_t*)(tmp);
+
+			Intersections::RayAndVoxelGrid(ray, m, [&](uint8_t type)->bool {
+				if (type == 1)
 				{
 					uint8_t tmp[4] = { (uint8_t)(255), (uint8_t)(255), (uint8_t)(255), 0xFF };
 					data[index] = *(uint32_t*)(tmp);
+					return true;
 				}
-				else
-				{
-					uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 255), (uint8_t)(Math::Abs(ray.Direction.y) * 255), (uint8_t)(Math::Abs(ray.Direction.z) * 255), 0xFF };
-					data[index] = *(uint32_t*)(tmp);
-				}
-			});
-			
+
+				return false;
+			});*/
 
 			++index;
 			relX += deltaX;

@@ -29,20 +29,38 @@ float Sqrt(const float number)
 	return sqrt(number);
 }
 
-float Min(float a, float b)
+
+float Min(const float a, const float b)
 {
 	return a < b ? a : b;
 }
 
-float Max(float a, float b)
+float Max(const float a, const float b)
 {
 	return a < b ? b : a;
+}
+
+float Min(const float a, const float b, const float c)
+{
+	return a < b ? (a < c ? a : c) : (b < c ? b : c);
+}
+
+float Max(const float a, const float b, const float c)
+{
+	return a < b ? (b < c ? c : b) : (a < c ? c : a);
 }
 
 float Abs(const float number)
 {
 	return abs(number);
 }
+
+
+float Mod(const float numer, const float denom)
+{
+	return fmod(numer, denom);
+}
+
 
 float Tan(const float angle)
 {
