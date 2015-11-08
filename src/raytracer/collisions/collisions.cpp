@@ -132,21 +132,15 @@ bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, Vector3 &intersec
 	if (tmin > tmax) // if tmin > tmax, ray doesn't intersect AABB
 		return false;
 
-	intersection = ray.Position + ray.Direction * tmin;
+	intersection = (ray.Position + ray.Direction * tmin);
 	return true;
 }
 
-void RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, std::function<bool(unsigned char)> func_pointer)
+bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection)
 {
 	Vector3 voxelModelIntersection;
 	if (!RayAndVoxelModel(ray, box, voxelModelIntersection))
-	{
-		func_pointer(0);
-		return;
-	}
-
-	//func_pointer(1);
-	//return;
+		return false;
 
 	Vector3 relVoxIntersect;
 	if (ray.Position.x >= box.Position.x
@@ -159,9 +153,12 @@ void RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, std::function<bool(u
 	else
 		relVoxIntersect = (voxelModelIntersection - box.Position);
 
-	uint32_t X = uint32_t(relVoxIntersect.x / VoxelModel::VOXEL_SIZE_X);
-	uint32_t Y = uint32_t(relVoxIntersect.y / VoxelModel::VOXEL_SIZE_Y);
-	uint32_t Z = uint32_t(relVoxIntersect.z / VoxelModel::VOXEL_SIZE_Z);
+	int X = relVoxIntersect.x / VoxelModel::VOXEL_SIZE_X;
+	int Y = relVoxIntersect.y / VoxelModel::VOXEL_SIZE_Y;
+	int Z = relVoxIntersect.z / VoxelModel::VOXEL_SIZE_Z;
+
+	if (X >= box.GetSizeX() || Y >= box.GetSizeY() || Z >= box.GetSizeZ())
+		return false;
 
 	int stepX = (ray.Direction.x >= 0.0f) ? 1 : -1;
 	int stepY = (ray.Direction.y >= 0.0f) ? 1 : -1;
@@ -178,29 +175,34 @@ void RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, std::function<bool(u
 	float tMaxZ = (ray.Direction.z > 0.0f) ? VoxelModel::VOXEL_SIZE_Z : 0.0f;
 	tMaxZ = (tMaxZ - Math::Mod(relVoxIntersect.z, VoxelModel::VOXEL_SIZE_Z)) / ray.Direction.z;
 
-	float tDeltaX = VoxelModel::VOXEL_SIZE_X / ray.Direction.x;
-	float tDeltaY = VoxelModel::VOXEL_SIZE_Y / ray.Direction.y;
-	float tDeltaZ = VoxelModel::VOXEL_SIZE_Z / ray.Direction.z;
+	float tDeltaX = Math::Abs(VoxelModel::VOXEL_SIZE_X / ray.Direction.x);
+	float tDeltaY = Math::Abs(VoxelModel::VOXEL_SIZE_Y / ray.Direction.y);
+	float tDeltaZ = Math::Abs(VoxelModel::VOXEL_SIZE_Z / ray.Direction.z);
 
 	for (;;)
 	{
-		if (func_pointer(box.GetVoxel(X, Y, Z)))
-			return;
+		if (box.GetVoxel(X, Y, Z) != 0)
+		{
+			intersection.HitObject = (Model*)&box;
+			intersection.Normal = Vector3();
+			intersection.Position = Vector3();
+			return true;
+		}
 
 		if (tMaxX < tMaxY)
 		{
 			if (tMaxX < tMaxZ)
 			{
 				X = X + stepX;
-				if (X >= box.GetSizeX())
-					return; // outside grid
+				if (X >= box.GetSizeX() || X < 0)
+					return false; // outside grid
 				tMaxX = tMaxX + tDeltaX;
 			}
 			else
 			{
 				Z = Z + stepZ;
-				if (Z == box.GetSizeZ())
-					return; // outside grid
+				if (Z >= box.GetSizeZ() || Z < 0)
+					return false; // outside grid
 				tMaxZ = tMaxZ + tDeltaZ;
 			}
 		}
@@ -209,19 +211,21 @@ void RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, std::function<bool(u
 			if (tMaxY < tMaxZ)
 			{
 				Y = Y + stepY;
-				if (Y == box.GetSizeY())
-					return; // outside grid
+				if (Y >= box.GetSizeY() || Y < 0)
+					return false; // outside grid
 				tMaxY = tMaxY + tDeltaY;
 			}
 			else
 			{
 				Z = Z + stepZ;
-				if (Z == box.GetSizeZ())
-					return; // outside grid
+				if (Z >= box.GetSizeZ() || Z < 0)
+					return false; // outside grid
 				tMaxZ = tMaxZ + tDeltaZ;
 			}
 		}
 	}
+
+	return false;
 }
 
 } // ~ namespace Intersections

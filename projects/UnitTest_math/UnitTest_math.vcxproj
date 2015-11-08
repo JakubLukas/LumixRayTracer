@@ -14,6 +14,7 @@
     <ProjectGuid>{B53F9BC2-5536-4337-B049-6F803B30945B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>UnitTest_math</RootNamespace>
+    <ProjectName>UnitTest_math</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -43,6 +44,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IntDir>tests.dir\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -88,7 +90,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\tests\math\vector3_tests.cpp" />
+    <ClCompile Include="..\..\tests\math\vector3test.cpp" />
     <ClCompile Include="..\..\tests\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>

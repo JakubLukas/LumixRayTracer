@@ -18,7 +18,7 @@ namespace Intersections
 bool RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection);
 bool RayAndBox(const Ray &ray, const Box &box, RayHit &intersection);
 bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, Vector3 &intersection);
-void RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, std::function<bool (unsigned char)> func_pointer);
+bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection);
 
 } // ~ namespace Intersections
 
