@@ -76,12 +76,12 @@ void RayTracerSystem::Update(const float &deltaTime)
 			{
 				//Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
 				//uint8_t tmp[4] = { (uint8_t)(intersection.x * 255), (uint8_t)(intersection.y * 255), (uint8_t)(intersection.z * 255), 0xFF };
-				uint8_t tmp[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
+				uint8_t tmp[4] = { intersection.Position.x * 255, intersection.Position.y * 255, intersection.Position.z * 255, 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}
 			else
 			{
-				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 255), (uint8_t)(Math::Abs(ray.Direction.y) * 255), (uint8_t)(Math::Abs(ray.Direction.z) * 255), 0xFF };
+				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}
 
