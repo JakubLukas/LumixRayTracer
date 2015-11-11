@@ -1,5 +1,6 @@
 #include "collisions.h"
 
+#include <cfloat>
 #include "ray.h"
 #include "ray_hit.h"
 #include "primitives/sphere.h"
@@ -109,24 +110,42 @@ bool Intersections::RayAndBox(const Ray &ray, const Box &box, RayHit &intersecti
 
 bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, float &intersection)
 {
-	Vector3 dirfrac(
-		(ray.Direction.x < 0.0001f && ray.Direction.x > -0.0001f) ? 0.0001f : 1.0f / ray.Direction.x,
-		(ray.Direction.y < 0.0001f && ray.Direction.y > -0.0001f) ? 0.0001f : 1.0f / ray.Direction.y,
-		(ray.Direction.z < 0.0001f && ray.Direction.z > -0.0001f) ? 0.0001f : 1.0f / ray.Direction.z
-		);
+	static const float EPSILON = FLT_EPSILON;
 
 	const Vector3 boxMax = model.GetMaxPoint();
-	float t1 = (model.Position.x - ray.Position.x) * dirfrac.x;
-	float t2 = (boxMax.x - ray.Position.x) * dirfrac.x;
-	float t3 = (model.Position.y - ray.Position.y) * dirfrac.y;
-	float t4 = (boxMax.y - ray.Position.y) * dirfrac.y;
-	float t5 = (model.Position.z - ray.Position.z) * dirfrac.z;
-	float t6 = (boxMax.z - ray.Position.z) * dirfrac.z;
+
+	float t1(-1.0f);
+	float t2(-1.0f);
+	float t3(-1.0f);
+	float t4(-1.0f);
+	float t5(-1.0f);
+	float t6(-1.0f);
+
+	if (ray.Direction.x > EPSILON || ray.Direction.x < -EPSILON)
+	{
+		float dirfrac = 1.0f / ray.Direction.x;
+		t1 = (model.Position.x - ray.Position.x) * dirfrac;
+		t2 = (boxMax.x - ray.Position.x) * dirfrac;
+	}
+
+	if (ray.Direction.y > EPSILON || ray.Direction.y < -EPSILON)
+	{
+		float dirfrac = 1.0f / ray.Direction.y;
+		t3 = (model.Position.y - ray.Position.y) * dirfrac;
+		t4 = (boxMax.y - ray.Position.y) * dirfrac;
+	}
+
+	if (ray.Direction.z > EPSILON || ray.Direction.z < -EPSILON)
+	{
+		float dirfrac = 1.0f / ray.Direction.z;
+		t5 = (model.Position.z - ray.Position.z) * dirfrac;
+		t6 = (boxMax.z - ray.Position.z) * dirfrac;
+	}
 
 	float tmin = Math::Max(Math::Min(t1, t2), Math::Min(t3, t4), Math::Min(t5, t6));
 	float tmax = Math::Min(Math::Max(t1, t2), Math::Max(t3, t4), Math::Max(t5, t6));
 
-	if (tmax < 0) // if tmax < 0, ray is intersecting AABB, but whole AABB is behing us
+	if (tmax < 0.0f) // if tmax < 0, ray is intersecting AABB, but whole AABB is behing us
 		return false;
 
 	if (tmin > tmax) // if tmin > tmax, ray doesn't intersect AABB
@@ -135,6 +154,11 @@ bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, float &intersecti
 	intersection = tmin;
 	return true;
 }
+
+/*
+Thanks to:
+John Amanatides and Andrew Woo, A Fast Voxel Traversal Algorithm for Ray Tracing (In Eurographics ’87)
+*/
 
 bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection)
 {
@@ -156,22 +180,19 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 	else
 		relVoxIntersect = (voxelModelIntersection - box.Position);
 
-	int X = relVoxIntersect.x / VoxelModel::VOXEL_SIZE_X;
-	int Y = relVoxIntersect.y / VoxelModel::VOXEL_SIZE_Y;
-	int Z = relVoxIntersect.z / VoxelModel::VOXEL_SIZE_Z;
+	int X = (int)Math::Floor(relVoxIntersect.x / VoxelModel::VOXEL_SIZE_X);
+	int Y = (int)Math::Floor(relVoxIntersect.y / VoxelModel::VOXEL_SIZE_Y);
+	int Z = (int)Math::Floor(relVoxIntersect.z / VoxelModel::VOXEL_SIZE_Z);
+	int sizeX = (int)box.GetSizeX();
+	int sizeY = (int)box.GetSizeY();
+	int sizeZ = (int)box.GetSizeZ();
 
-	if (X >= box.GetSizeX())
-		X = box.GetSizeX()-1;
-	if (X < 0)
-		X = 0;
-	if (Y >= box.GetSizeY())
-		Y = box.GetSizeY()-1;
-	if (Y < 0)
-		Y = 0;
-	if (Z >= box.GetSizeZ())
-		Z = box.GetSizeZ()-1;
-	if (Z < 0)
-		Z = 0;
+	if (X >= sizeX || X < 0)
+		return false;
+	if (Y >= sizeY || Y < 0)
+		return false;
+	if (Z >= sizeZ || Z < 0)
+		return false;
 
 	int stepX = (ray.Direction.x >= 0.0f) ? 1 : -1;
 	int stepY = (ray.Direction.y >= 0.0f) ? 1 : -1;
@@ -198,6 +219,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 		if (box.GetVoxel(X, Y, Z) != 0)
 		{
 			intersection.HitObject = (Model*)&box;
+			intersection.Position = Vector3(X, Y, Z);
 			intersection.Normal = Vector3();
 			return true;
 		}
@@ -207,18 +229,22 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 			if (tMaxX < tMaxZ)
 			{
 				X = X + stepX;
-				if (X >= box.GetSizeX() || X < 0)
+				if (X >= sizeX || X < 0)
 					return false; // outside grid
-				intersection.Position = Vector3(X, Y, Z);
 				tMaxX = tMaxX + tDeltaX;
+				intersection.Normal.x = stepX;
+				intersection.Normal.y = 0.0f;
+				intersection.Normal.z = 0.0f;
 			}
 			else
 			{
 				Z = Z + stepZ;
-				if (Z >= box.GetSizeZ() || Z < 0)
+				if (Z >= sizeZ || Z < 0)
 					return false; // outside grid
-				intersection.Position = Vector3(X, Y, Z);
 				tMaxZ = tMaxZ + tDeltaZ;
+				intersection.Normal.x = 0.0f;
+				intersection.Normal.y = 0.0f;
+				intersection.Normal.z = stepZ;
 			}
 		}
 		else
@@ -226,18 +252,22 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 			if (tMaxY < tMaxZ)
 			{
 				Y = Y + stepY;
-				if (Y >= box.GetSizeY() || Y < 0)
+				if (Y >= sizeY || Y < 0)
 					return false; // outside grid
-				intersection.Position = Vector3(X, Y, Z);
 				tMaxY = tMaxY + tDeltaY;
+				intersection.Normal.x = 0.0f;
+				intersection.Normal.y = stepY;
+				intersection.Normal.z = 0.0f;
 			}
 			else
 			{
 				Z = Z + stepZ;
-				if (Z >= box.GetSizeZ() || Z < 0)
+				if (Z >= sizeZ || Z < 0)
 					return false; // outside grid
-				intersection.Position = Vector3(X, Y, Z);
 				tMaxZ = tMaxZ + tDeltaZ;
+				intersection.Normal.x = 0.0f;
+				intersection.Normal.y = 0.0f;
+				intersection.Normal.z = stepZ;
 			}
 		}
 	}

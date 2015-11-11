@@ -21,12 +21,12 @@ float DegFromRad(const float angle)
 
 float Pow(const float number, const float exponent)
 {
-	return pow(number, exponent);
+	return powf(number, exponent);
 }
 
 float Sqrt(const float number)
 {
-	return sqrt(number);
+	return sqrtf(number);
 }
 
 
@@ -52,7 +52,17 @@ float Max(const float a, const float b, const float c)
 
 float Abs(const float number)
 {
-	return abs(number);
+	return fabsf(number);
+}
+
+float Ceil(const float number)
+{
+	return ceilf(number);
+}
+
+float Floor(const float number)
+{
+	return floorf(number);
 }
 
 
@@ -64,7 +74,7 @@ float Mod(const float numer, const float denom)
 
 float Tan(const float angle)
 {
-	return tan(angle);
+	return tanf(angle);
 }
 
 } // ~ namespace Math

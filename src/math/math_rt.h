@@ -18,6 +18,8 @@ float Max(const float a, const float b);
 float Min(const float a, const float b, const float c);
 float Max(const float a, const float b, const float c);
 float Abs(const float number);
+float Ceil(const float number);
+float Floor(const float number);
 
 float Mod(const float numer, const float denom);
 

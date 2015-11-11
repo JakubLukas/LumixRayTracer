@@ -48,10 +48,10 @@ void RayTracerSystem::Update(const float &deltaTime)
 	int height = _texture->getHeight();
 	uint32_t* data = (uint32_t*)(_texture->getData());
 
-	Sphere s(Vector3(0.0f, 0.0f, -2.0f), 1.2f);
-	s.ObjMaterial = _objectMaterial;
-	Box b(Vector3(0.0f, 0.0f, -2.0f), Vector3(1.0f, 1.0f, 1.0f));
-	b.ObjMaterial = _objectMaterial;
+	//Sphere s(Vector3(0.0f, 0.0f, -2.0f), 1.2f);
+	//s.ObjMaterial = _objectMaterial;
+	//Box b(Vector3(0.0f, 0.0f, -2.0f), Vector3(1.0f, 1.0f, 1.0f));
+	//b.ObjMaterial = _objectMaterial;
 	VoxelModel m(3, 3, 3);
 	m.ObjMaterial = _objectMaterial;
 
@@ -74,9 +74,9 @@ void RayTracerSystem::Update(const float &deltaTime)
 			_camera.GetRay(relX, relY, ray);
 			if (Intersections::RayAndVoxelGrid(ray, m, intersection))
 			{
-				//Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
-				//uint8_t tmp[4] = { (uint8_t)(intersection.x * 255), (uint8_t)(intersection.y * 255), (uint8_t)(intersection.z * 255), 0xFF };
-				uint8_t tmp[4] = { intersection.Position.x * 255, intersection.Position.y * 255, intersection.Position.z * 255, 0xFF };
+				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
+				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
+				//uint8_t tmp[4] = { intersection.Position.x * 255, intersection.Position.y * 255, intersection.Position.z * 255, 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}
 			else

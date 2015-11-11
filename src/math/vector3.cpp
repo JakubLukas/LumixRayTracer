@@ -11,6 +11,11 @@ Vector3::Vector3()
 {
 }
 
+Vector3::Vector3(const int a, const int b, const int c)
+	: Vec3((float)a, (float)b, (float)c)
+{
+}
+
 Vector3::Vector3(const float a, const float b, const float c)
 	: Vec3(a, b, c)
 {

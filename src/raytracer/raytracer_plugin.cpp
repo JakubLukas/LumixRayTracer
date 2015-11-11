@@ -1,37 +1,16 @@
 #include "raytracer_plugin.h"
 
-#include "core/array.h"
 #include "core/crc32.h"
-#include "core/path.h"
-#include "core/fs/file_system.h"
-#include "core/json_serializer.h"
-#include "core/lifo_allocator.h"
-#include "core/math_utils.h"
-#include "core/profiler.h"
 #include "core/resource_manager.h"
-#include "core/resource_manager_base.h"
-#include "core/vec4.h"
-#include "debug/allocator.h"
-#include "debug/debug.h"
 #include "editor/world_editor.h"
 #include "engine.h"
 #include "engine/plugin_manager.h"
-#include "engine/property_descriptor.h"
 #include "renderer/material.h"
 #include "renderer/material_manager.h"
-#include "renderer/model.h"
-#include "renderer/model_manager.h"
-#include "renderer/pipeline.h"
 #include "renderer/render_scene.h"
-#include "renderer/shader.h"
-#include "renderer/shader_manager.h"
 #include "renderer/texture.h"
 #include "renderer/texture_manager.h"
 #include "universe/universe.h"
-#include <bgfx/bgfx.h>
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <cstdio>
 
 #include "raytracer_system.h"
 

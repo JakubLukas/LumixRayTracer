@@ -12,6 +12,7 @@ struct Vector3 : public Lumix::Vec3
 	static const float EPSILON;
 
 	Vector3();
+	Vector3(const int a, const int b, const int c);
 	Vector3(const float a, const float b, const float c);
 	Vector3(const Lumix::Vec3 v);
 
