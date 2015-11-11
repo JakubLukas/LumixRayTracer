@@ -107,7 +107,7 @@ bool Intersections::RayAndBox(const Ray &ray, const Box &box, RayHit &intersecti
 	return true;
 }
 
-bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, Vector3 &intersection)
+bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, float &intersection)
 {
 	Vector3 dirfrac(
 		(ray.Direction.x < 0.0001f && ray.Direction.x > -0.0001f) ? 0.0001f : 1.0f / ray.Direction.x,
@@ -132,15 +132,18 @@ bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, Vector3 &intersec
 	if (tmin > tmax) // if tmin > tmax, ray doesn't intersect AABB
 		return false;
 
-	intersection = (ray.Position + ray.Direction * tmin);
+	intersection = tmin;
 	return true;
 }
 
 bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection)
 {
-	Vector3 voxelModelIntersection;
-	if (!RayAndVoxelModel(ray, box, voxelModelIntersection))
+	float param;
+	if (!RayAndVoxelModel(ray, box, param))
 		return false;
+
+	param += 0.0001f;
+	Vector3 voxelModelIntersection = ray.Position + param * ray.Direction;
 
 	Vector3 relVoxIntersect;
 	if (ray.Position.x >= box.Position.x
@@ -189,6 +192,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 	float tDeltaY = Math::Abs(VoxelModel::VOXEL_SIZE_Y / ray.Direction.y);
 	float tDeltaZ = Math::Abs(VoxelModel::VOXEL_SIZE_Z / ray.Direction.z);
 
+	intersection.Position = Vector3(X, Y, Z);
 	for (;;)
 	{
 		if (box.GetVoxel(X, Y, Z) != 0)
