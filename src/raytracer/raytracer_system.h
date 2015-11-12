@@ -35,16 +35,26 @@ public:
 
 	void Update(const float &deltaTime);
 	void UpdateCamera(const Lumix::Vec3 &position,
-										const Lumix::Quat &rotation,
-										const float &fov,
-										const float &width,
-										const float &height,
-										const float &nearPlane,
-										const float &farPlane,
-										const Lumix::Matrix& viewMatrix);
+		const Lumix::Quat &rotation,
+		const float &fov,
+		const float &width,
+		const float &height,
+		const float &nearPlane,
+		const float &farPlane,
+		const Lumix::Matrix& viewMatrix);
 
-	void SetIsReady(bool isReady);
-	bool GetIsReady();
+	inline void SetIsReady(bool isReady);
+	inline bool GetIsReady();
 };
+
+inline void RayTracerSystem::SetIsReady(bool isReady)
+{
+	_isReady = isReady;
+}
+
+inline bool RayTracerSystem::GetIsReady()
+{
+	return _isReady;
+}
 
 } // ~ namespace LumixRayTracer

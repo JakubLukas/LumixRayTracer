@@ -65,8 +65,8 @@ void RayTracerSystem::Update(const float &deltaTime)
 		index = y * height;
 		for (int x = 0; x < width; ++x)
 		{
-			_camera.GetRay(relX, relY, ray);
-			if (Intersections::RayAndVoxelGrid(ray, *_voxelWord, intersection))
+			_camera.GetRay(relX, relY, ray);//////20
+			if (Intersections::RayAndVoxelGrid(ray, *_voxelWord, intersection))//////59
 			{
 				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
 				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
@@ -75,7 +75,7 @@ void RayTracerSystem::Update(const float &deltaTime)
 			}
 			else
 			{
-				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };
+				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };//////13.9
 				data[index] = *(uint32_t*)(tmp);
 			}
 
@@ -88,13 +88,13 @@ void RayTracerSystem::Update(const float &deltaTime)
 }
 
 void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
-														 const Lumix::Quat &rotation,
-														 const float &fov,
-														 const float &width,
-														 const float &height,
-														 const float &nearPlane,
-														 const float &farPlane,
-														 const Lumix::Matrix& viewMatrix)
+	const Lumix::Quat &rotation,
+	const float &fov,
+	const float &width,
+	const float &height,
+	const float &nearPlane,
+	const float &farPlane,
+	const Lumix::Matrix& viewMatrix)
 {
 	_camera.Position = position;
 	_camera.Rotation = rotation;
@@ -104,16 +104,6 @@ void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
 	_camera.NearPlane = nearPlane;
 	_camera.FarPlane = farPlane;
 	_camera.OnChanged();
-}
-
-void RayTracerSystem::SetIsReady(bool isReady)
-{
-	_isReady = isReady;
-}
-
-bool RayTracerSystem::GetIsReady()
-{
-	return _isReady;
 }
 
 } // ~namespace LumixRayTracer

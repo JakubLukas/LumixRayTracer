@@ -162,7 +162,7 @@ bool RayAndVoxelModel(const Ray &ray, const VoxelModel &model, float &intersecti
 	return true;
 }
 
-bool IsPointInVoxelModel(const Vector3 &point, const Vector3 &min, const Vector3 &max)
+inline bool IsPointInVoxelModel(const Vector3 &point, const Vector3 &min, const Vector3 &max)
 {
 	if (point.x > min.x && point.x < max.x
 			&& point.y > min.y && point.y < max.y
@@ -238,7 +238,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 		{
 			intersection.HitObject = (Model*)&box;
 			intersection.Position = Vector3(X, Y, Z);
-			intersection.Normal = Vector3();
+			//intersection.Normal = Vector3();
 			return true;
 		}
 
@@ -251,7 +251,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 					return false; // outside grid
 				tLast = tMaxX;
 				tMaxX = tMaxX + tDeltaX;
-				intersection.Normal.x = stepX;
+				intersection.Normal.x = -stepX;
 				intersection.Normal.y = 0.0f;
 				intersection.Normal.z = 0.0f;
 			}
@@ -264,7 +264,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				tMaxZ = tMaxZ + tDeltaZ;
 				intersection.Normal.x = 0.0f;
 				intersection.Normal.y = 0.0f;
-				intersection.Normal.z = stepZ;
+				intersection.Normal.z = -stepZ;
 			}
 		}
 		else
@@ -277,7 +277,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				tLast = tMaxY;
 				tMaxY = tMaxY + tDeltaY;
 				intersection.Normal.x = 0.0f;
-				intersection.Normal.y = stepY;
+				intersection.Normal.y = -stepY;
 				intersection.Normal.z = 0.0f;
 			}
 			else
@@ -289,7 +289,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				tMaxZ = tMaxZ + tDeltaZ;
 				intersection.Normal.x = 0.0f;
 				intersection.Normal.y = 0.0f;
-				intersection.Normal.z = stepZ;
+				intersection.Normal.z = -stepZ;
 			}
 		}
 	}

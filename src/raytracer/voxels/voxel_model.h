@@ -25,9 +25,9 @@ public:
 	VoxelModel(const uint32_t sizeX, const uint32_t sizeY, const uint32_t sizeZ);
 
 private:
-	void SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z, const uint8_t value);
+	inline void SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z, const uint8_t value);
 public:
-	uint8_t GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const;
+	inline uint8_t GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const;
 
 	inline uint32_t GetSizeX() const { return _sizeX; };
 	inline uint32_t GetSizeY() const { return _sizeY; };
@@ -35,5 +35,17 @@ public:
 	inline const Vector3 &GetSizePoint() const { return _maxPoint; };
 
 };
+
+void VoxelModel::SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z, const uint8_t value)
+{
+	ASSERT(x < _sizeX && y < _sizeY && z < _sizeZ);
+	_data[x * _sizeX * _sizeY + y * _sizeY + z] = value;
+}
+
+uint8_t VoxelModel::GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const
+{
+	ASSERT(x < _sizeX && y < _sizeY && z < _sizeZ);
+	return _data[x * _sizeX * _sizeY + y * _sizeY + z];
+}
 
 } // ~ namespace LumixRayTracer

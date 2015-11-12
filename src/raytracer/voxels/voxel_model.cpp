@@ -20,19 +20,7 @@ VoxelModel::VoxelModel(const uint32_t sizeX, const uint32_t sizeY, const uint32_
 	SetVoxel(0, 0, 0, 1);
 	SetVoxel(1, 1, 1, 1);
 	SetVoxel(2, 2, 2, 1);
-}
-
-
-void VoxelModel::SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z, const uint8_t value)
-{
-	ASSERT(x < _sizeX && y < _sizeY && z < _sizeZ);
-	_data[x * _sizeX * _sizeY + y * _sizeY + z] = value;
-}
-
-uint8_t VoxelModel::GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const
-{
-	ASSERT(x < _sizeX && y < _sizeY && z < _sizeZ);
-	return _data[x * _sizeX * _sizeY + y * _sizeY + z];
+	SetVoxel(9, 9, 9, 1);
 }
 
 } // ~ namespace LumixRayTracer

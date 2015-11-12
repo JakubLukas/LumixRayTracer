@@ -18,7 +18,6 @@
     <ClInclude Include="..\..\src\math\vector4.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\math\math_rt.cpp" />
     <ClCompile Include="..\..\src\math\matrix44.cpp" />
     <ClCompile Include="..\..\src\math\quaternion.cpp" />
     <ClCompile Include="..\..\src\math\vector3.cpp" />

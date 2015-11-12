@@ -16,14 +16,35 @@ struct Vector3 : public Lumix::Vec3
 	Vector3(const float a, const float b, const float c);
 	Vector3(const Lumix::Vec3 v);
 
-	Vector3& operator *=(const float f);
+	inline Vector3& operator *=(const float f);
 
-	static float Dot(const Vector3 v1, const Vector3 v2);
-	static Vector3 Cross(const Vector3 v1, const Vector3 v2);
+	inline static float Dot(const Vector3 v1, const Vector3 v2);
+	inline static Vector3 Cross(const Vector3 v1, const Vector3 v2);
 };
 
-Vector3 operator *(const float f, Vector3 v);
-Vector3 operator *(Vector3 v, const float f);
+//-------------------------------------------------------------------
+
+inline Vector3& Vector3::operator *= (const float f)
+{
+	x *= f;
+	y *= f;
+	z *= f;
+
+	return *this;
+}
+
+inline Vector3 operator *(const float f, Vector3 v)
+{
+	return v *= f;
+}
+
+inline Vector3 operator *(Vector3 v, const float f)
+{
+	return v *= f;
+}
+
+//-------------------------------------------------------------------
+
 inline bool operator==(const Vector3& lhs, const Vector3& rhs)
 {
 	if (Math::Abs(lhs.x - rhs.x) < Vector3::EPSILON)
@@ -39,6 +60,22 @@ inline bool operator==(const Vector3& lhs, const Vector3& rhs)
 inline bool operator!=(const Vector3& lhs, const Vector3& rhs)
 {
 	return !(lhs == rhs);
+}
+
+//-------------------------------------------------------------------
+
+inline float Vector3::Dot(const Vector3 v1, const Vector3 v2)
+{
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+inline Vector3 Vector3::Cross(const Vector3 v1, const Vector3 v2)
+{
+	return Vector3(
+		v1.y * v2.z - v1.z * v2.y,
+		v1.z * v2.x - v1.x * v2.z,
+		v1.x * v2.y - v1.y * v2.x
+		);
 }
 
 } // ~ namespace LumixRayTracer
