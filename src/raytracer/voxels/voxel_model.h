@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "model.h"
 
 
@@ -31,7 +32,7 @@ public:
 	inline uint32_t GetSizeX() const { return _sizeX; };
 	inline uint32_t GetSizeY() const { return _sizeY; };
 	inline uint32_t GetSizeZ() const { return _sizeZ; };
-	inline const Vector3 &GetMaxPoint() const { return _maxPoint; };
+	inline const Vector3 &GetSizePoint() const { return _maxPoint; };
 
 };
 

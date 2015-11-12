@@ -1,5 +1,7 @@
 #include "voxel_model.h"
 
+#include <cstdlib>
+
 
 namespace LumixRayTracer
 {

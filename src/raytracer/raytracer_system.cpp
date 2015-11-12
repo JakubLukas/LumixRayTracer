@@ -25,6 +25,7 @@ RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
 	_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
 
 	_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
+	_voxelWord->ObjMaterial = _objectMaterial;
 }
 
 RayTracerSystem::~RayTracerSystem()
@@ -48,13 +49,6 @@ void RayTracerSystem::Update(const float &deltaTime)
 	int height = _texture->getHeight();
 	uint32_t* data = (uint32_t*)(_texture->getData());
 
-	//Sphere s(Vector3(0.0f, 0.0f, -2.0f), 1.2f);
-	//s.ObjMaterial = _objectMaterial;
-	//Box b(Vector3(0.0f, 0.0f, -2.0f), Vector3(1.0f, 1.0f, 1.0f));
-	//b.ObjMaterial = _objectMaterial;
-	VoxelModel m(3, 3, 3);
-	m.ObjMaterial = _objectMaterial;
-
 	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
 	RayHit intersection;
 	
@@ -72,7 +66,7 @@ void RayTracerSystem::Update(const float &deltaTime)
 		for (int x = 0; x < width; ++x)
 		{
 			_camera.GetRay(relX, relY, ray);
-			if (Intersections::RayAndVoxelGrid(ray, m, intersection))
+			if (Intersections::RayAndVoxelGrid(ray, *_voxelWord, intersection))
 			{
 				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
 				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
