@@ -18,9 +18,18 @@ VoxelModel::VoxelModel(const uint32_t sizeX, const uint32_t sizeY, const uint32_
 	_data = (uint8_t*)calloc(sizeX * sizeY * sizeZ, sizeof(uint8_t));
 
 	SetVoxel(0, 0, 0, 1);
-	SetVoxel(1, 1, 1, 1);
-	SetVoxel(2, 2, 2, 1);
 	SetVoxel(9, 9, 9, 1);
+	for (int x = 0; x < _sizeX; ++x)
+	{
+		for (int y = 0; y < _sizeY; ++y)
+		{
+			for (int z = 0; z < _sizeZ; ++z)
+			{
+				if (rand() % 2 == 0)
+					SetVoxel(x, y, z, 1);
+			}
+		}
+	}
 }
 
 } // ~ namespace LumixRayTracer

@@ -14,8 +14,8 @@ struct DirectionalLight : public Light
 		: Direction(0.0f, -1.0f, 0.0f)
 	{ }
 
-	DirectionalLight(const Vector3 direction)
-		: Direction(direction)
+	DirectionalLight(const Vector3 &direction)
+		: Direction(direction.normalized())
 	{ }
 
 };

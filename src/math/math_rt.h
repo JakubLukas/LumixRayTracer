@@ -75,6 +75,8 @@ inline float Mod(const float numer, const float denom)
 	return fmod(numer, denom);
 }
 
+//-------------------------------------------------------------------
+
 inline float Tan(const float angle)
 {
 	return tanf(angle);

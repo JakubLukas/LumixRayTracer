@@ -12,6 +12,7 @@
 #include "material.h"
 #include "shading/phong_shader.h"
 #include "voxels/voxel_model.h"
+#include "lightning/directional_light.h"
 
 
 namespace LumixRayTracer
@@ -49,8 +50,9 @@ void RayTracerSystem::Update(const float &deltaTime)
 	int height = _texture->getHeight();
 	uint32_t* data = (uint32_t*)(_texture->getData());
 
-	Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 1));
+	Ray ray;
 	RayHit intersection;
+	DirectionalLight light(Vector3(-1, -1, -1));
 	
 	float deltaX = 1.0f / width;
 	float deltaY = 1.0f / height;
@@ -65,10 +67,10 @@ void RayTracerSystem::Update(const float &deltaTime)
 		index = y * height;
 		for (int x = 0; x < width; ++x)
 		{
-			_camera.GetRay(relX, relY, ray);//////20
-			if (Intersections::RayAndVoxelGrid(ray, *_voxelWord, intersection))//////59
+			_camera.GetRay(relX, relY, ray);
+			if (Intersections::RayAndVoxelGrid(ray, *_voxelWord, intersection))
 			{
-				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera.Position, _camera.Position);
+				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, light);
 				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
 				//uint8_t tmp[4] = { intersection.Position.x * 255, intersection.Position.y * 255, intersection.Position.z * 255, 0xFF };
 				data[index] = *(uint32_t*)(tmp);
