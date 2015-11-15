@@ -10,3 +10,4 @@
 /projects/UnitTest_math/UnitTest_math.vcxproj.user
 /projects/UnitTest_math/tests.dir
 /projects/LumixRayTracer/ipch
+/projects/LumixRayTracer/*.user
