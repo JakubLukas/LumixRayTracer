@@ -21,9 +21,9 @@ namespace LumixRayTracer
 RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
 	: _allocator(allocator)
 {
-	ColorSampler* sampl = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));
-	PhongShader* shad = LUMIX_NEW(_allocator, PhongShader)(sampl);
-	_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
+	ColorSampler* sampAmb = LUMIX_NEW(_allocator, ColorSampler)(Vector3(0.05f, 0.05f, 0.05f));//MEMORY LEAK
+	ColorSampler* sampDiff = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));//MEMORY LEAK
+	PhongShader* shad = LUMIX_NEW(_allocator, PhongShader)(sampAmb, sampDiff);//MEMORY LEAK
 
 	_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
 	_voxelWord->ObjMaterial = _objectMaterial;
@@ -31,6 +31,9 @@ RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
 
 RayTracerSystem::~RayTracerSystem()
 {
+	PhongShader* sh = static_cast<PhongShader*>(_objectMaterial->MaterialShader);
+	LUMIX_DELETE(_allocator, sh->AmbientSampler);
+	LUMIX_DELETE(_allocator, sh->DiffuseSampler);
 	LUMIX_DELETE(_allocator, _objectMaterial->MaterialShader);
 	LUMIX_DELETE(_allocator, _objectMaterial);
 }
@@ -72,12 +75,11 @@ void RayTracerSystem::Update(const float &deltaTime)
 			{
 				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, light);
 				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
-				//uint8_t tmp[4] = { intersection.Position.x * 255, intersection.Position.y * 255, intersection.Position.z * 255, 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}
 			else
 			{
-				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };//////13.9
+				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}
 
