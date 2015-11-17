@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
     <ClInclude Include="..\..\src\raytracer\raytracer_plugin.h" />
     <ClInclude Include="..\..\src\raytracer\ray_hit.h" />
+    <ClInclude Include="..\..\src\raytracer\shading\lambert_shader.h" />
     <ClInclude Include="..\..\src\raytracer\shading\phong_shader.h" />
     <ClInclude Include="..\..\src\raytracer\shading\shader.h" />
     <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h" />

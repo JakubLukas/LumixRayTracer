@@ -295,7 +295,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 		{
 			intersection.HitObject = (Model*)&box;
 			intersection.Position = Vector3(index[0], index[1], index[2]);
-			return true;
+			break;
 		}
 
 		if (tMax[0] < tMax[1])
@@ -338,7 +338,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 		}
 	}
 
-	return false;
+	return true;
 }
 
 } // ~ namespace Intersections

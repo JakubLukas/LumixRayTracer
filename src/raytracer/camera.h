@@ -31,7 +31,7 @@ public:
 		Rotation(0.0f, 0.0f, 0.0f, 1.0f)
 	{}
 
-	void GetRay(float x, float y, Ray &ray)
+	void GetRay(float x, float y, Ray &ray) const
 	{
 		float px = (2.0f * x - 1.0f) * _fovTan * _ratio;
 		float py = (1.0f - 2.0f * y) * _fovTan;
@@ -40,6 +40,11 @@ public:
 		ray.Direction.normalize();
 
 		ray.Position = Position;
+	}
+
+	Vector3 GetDirection() const
+	{
+		return Rotation * Vector3(0.0f, 0.0f, -1.0f);
 	}
 
 	void OnChanged()

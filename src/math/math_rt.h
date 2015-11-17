@@ -53,6 +53,12 @@ inline float Max(const float a, const float b, const float c)
 	return a < b ? (b < c ? c : b) : (a < c ? c : a);
 }
 
+inline float Clamp(const float number, const float min, const float max)
+{
+	ASSERT(min < max);
+	return (number < min) ? min : (number > max) ? max : number;
+}
+
 inline float Abs(const float number)
 {
 	return fabsf(number);

@@ -78,4 +78,25 @@ inline Vector3 Vector3::Cross(const Vector3 v1, const Vector3 v2)
 		);
 }
 
-} // ~ namespace LumixRayTracer
+namespace Math
+{
+inline Vector3 Min(const Vector3& v, const float a)
+{
+	return Vector3(Math::Min(v.x, a), Math::Min(v.y, a), Math::Min(v.z, a));
+}
+
+inline Vector3 Max(const Vector3& v, const float a)
+{
+	return Vector3(Math::Max(v.x, a), Math::Max(v.y, a), Math::Max(v.z, a));
+}
+
+inline Vector3 Clamp(const Vector3& v, const float min, const float max)
+{
+	return Vector3(Math::Clamp(v.x, min, max),
+				   Math::Clamp(v.y, min, max),
+				   Math::Clamp(v.z, min, max));
+}
+
+} // namespace Math
+
+} // namespace LumixRayTracer

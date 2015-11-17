@@ -6,10 +6,12 @@
 namespace LumixRayTracer
 {
 
-struct DirectionalLight : public Light
+class DirectionalLight : public Light
 {
+public:
 	Vector3 Direction;
 
+public:
 	DirectionalLight()
 		: Direction(0.0f, -1.0f, 0.0f)
 	{ }

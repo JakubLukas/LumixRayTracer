@@ -4,7 +4,7 @@
 namespace LumixRayTracer
 {
 struct Vector3;
-struct DirectionalLight;
+class DirectionalLight;
 
 class Shader
 {

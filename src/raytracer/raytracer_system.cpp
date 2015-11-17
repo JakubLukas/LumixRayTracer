@@ -10,9 +10,48 @@
 #include "renderer/texture.h"
 
 #include "material.h"
-#include "shading/phong_shader.h"
+#include "shading/lambert_shader.h"
 #include "voxels/voxel_model.h"
 #include "lightning/directional_light.h"
+#include "core/mt/task.h"
+
+
+
+
+
+
+
+class PixelColorTask : public Lumix::MT::Task
+{
+public:
+	PixelColorTask(Lumix::IAllocator& allocator)
+		: Lumix::MT::Task(allocator)
+	{
+	}
+
+
+	~PixelColorTask() {}
+
+
+	int task()
+	{
+		while (true)
+		{
+			//calculate color of pixel by shotted ray
+		}
+		return 0;
+	}
+
+	void stop() { }
+};
+
+
+
+
+
+
+
+
 
 
 namespace LumixRayTracer
@@ -21,21 +60,25 @@ namespace LumixRayTracer
 RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
 	: _allocator(allocator)
 {
-	ColorSampler* sampAmb = LUMIX_NEW(_allocator, ColorSampler)(Vector3(0.05f, 0.05f, 0.05f));//MEMORY LEAK
-	ColorSampler* sampDiff = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));//MEMORY LEAK
-	PhongShader* shad = LUMIX_NEW(_allocator, PhongShader)(sampAmb, sampDiff);//MEMORY LEAK
+	ColorSampler* sampAmb = LUMIX_NEW(_allocator, ColorSampler)(Vector3(0.05f, 0.05f, 0.05f));
+	ColorSampler* sampDiff = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));
+	LambertShader* shad = LUMIX_NEW(_allocator, LambertShader)(sampAmb, sampDiff);
+	_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
 
 	_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
 	_voxelWord->ObjMaterial = _objectMaterial;
+
+	_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -1, -1));
 }
 
 RayTracerSystem::~RayTracerSystem()
 {
-	PhongShader* sh = static_cast<PhongShader*>(_objectMaterial->MaterialShader);
+	LambertShader* sh = static_cast<LambertShader*>(_objectMaterial->MaterialShader);
 	LUMIX_DELETE(_allocator, sh->AmbientSampler);
 	LUMIX_DELETE(_allocator, sh->DiffuseSampler);
 	LUMIX_DELETE(_allocator, _objectMaterial->MaterialShader);
 	LUMIX_DELETE(_allocator, _objectMaterial);
+	LUMIX_DELETE(_allocator, _light);
 }
 
 void RayTracerSystem::SetTexture(Lumix::Texture* texture)
@@ -55,7 +98,6 @@ void RayTracerSystem::Update(const float &deltaTime)
 
 	Ray ray;
 	RayHit intersection;
-	DirectionalLight light(Vector3(-1, -1, -1));
 	
 	float deltaX = 1.0f / width;
 	float deltaY = 1.0f / height;
@@ -73,7 +115,7 @@ void RayTracerSystem::Update(const float &deltaTime)
 			_camera.GetRay(relX, relY, ray);
 			if (Intersections::RayAndVoxelGrid(ray, *_voxelWord, intersection))
 			{
-				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, light);
+				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, *_light);
 				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
 				data[index] = *(uint32_t*)(tmp);
 			}

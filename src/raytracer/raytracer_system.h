@@ -14,6 +14,7 @@ namespace LumixRayTracer
 {
 class Material;
 class VoxelModel;
+class DirectionalLight;
 
 class RayTracerSystem
 {
@@ -26,6 +27,7 @@ private:
 
 	Material* _objectMaterial;
 	VoxelModel* _voxelWord;
+	DirectionalLight* _light;
 
 public:
 	RayTracerSystem(Lumix::IAllocator& allocator);
