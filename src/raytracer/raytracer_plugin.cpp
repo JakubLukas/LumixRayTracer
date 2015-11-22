@@ -33,18 +33,22 @@ struct RayTracerPluginImpl : public RayTracerPlugin
 	Lumix::Texture* _texture;
 	Lumix::ComponentUID cameraUid;
 
-	RayTracerSystem rayTracerSystem;
+	RayTracerSystem* rayTracerSystem;
 
 	RayTracerPluginImpl(Lumix::Engine& engine)
 		: _engine(engine),
 		_editor(nullptr),
 		_material(nullptr),
 		_texture(nullptr),
-		cameraUid(Lumix::ComponentUID::INVALID),
-		rayTracerSystem(engine.getAllocator())
-	{ }
+		cameraUid(Lumix::ComponentUID::INVALID)
+	{
+		rayTracerSystem = RayTracerSystem::create(engine.getAllocator());
+	}
 
-	~RayTracerPluginImpl() { }
+	~RayTracerPluginImpl()
+	{
+		RayTracerSystem::destroy(rayTracerSystem);
+	}
 
 
 	virtual bool create() override

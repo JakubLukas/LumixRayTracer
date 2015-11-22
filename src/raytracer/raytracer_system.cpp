@@ -17,176 +17,245 @@
 
 namespace LumixRayTracer
 {
-
-TracingJob::TracingJob(Camera& camera,
-					   VoxelModel* model,
-					   DirectionalLight* light,
-					   float deltaX,
-					   float deltaY,
-					   int startX,
-					   int startY,
-					   int iterCountX,
-					   int iterCountY,
-					   uint32_t* data,
-					   Lumix::MTJD::Manager& manager,
-					   Lumix::IAllocator& allocator,
-					   Lumix::IAllocator& job_allocator)
-					   : Lumix::MTJD::Job(Lumix::MTJD::Job::AUTO_DESTROY, Lumix::MTJD::Priority::Default, manager, allocator, job_allocator),
-					   _camera(camera),
-					   _model(model),
-					   _light(light),
-					   _deltaX(deltaX),
-					   _deltaY(deltaY),
-					   _startX(startX),
-					   _startY(startY),
-					   _iterCountX(iterCountX),
-					   _iterCountY(iterCountY),
-					   _data(data)
+class TracingJob : public Lumix::MTJD::Job
 {
-	setJobName("TracingJob");
-}
+private:
+	Camera& _camera;
+	VoxelModel* _model;
+	DirectionalLight* _light;
+	float _deltaX;
+	float _deltaY;
+	int _startX;
+	int _startY;
+	int _iterCountX;
+	int _iterCountY;
+	uint32_t* _data;
 
-void TracingJob::execute()
-{
-	Ray ray;
-	RayHit intersection;
-
-	float relX = _startX * _deltaX;
-	float relY = (_startY + _iterCountY) * _deltaY;
-	int index = 0;
-
-	for (int y = 0; y < _iterCountY; ++y)
+public:
+	TracingJob(Camera& camera,
+			   VoxelModel* model,
+			   DirectionalLight* light,
+			   float deltaX,
+			   float deltaY,
+			   int startX,
+			   int startY,
+			   int iterCountX,
+			   int iterCountY,
+			   uint32_t* data,
+			   Lumix::MTJD::Manager& manager,
+			   Lumix::IAllocator& allocator,
+			   Lumix::IAllocator& job_allocator)
+			   : Lumix::MTJD::Job(Lumix::MTJD::Job::AUTO_DESTROY, Lumix::MTJD::Priority::Default, manager, allocator, job_allocator),
+			   _camera(camera),
+			   _model(model),
+			   _light(light),
+			   _deltaX(deltaX),
+			   _deltaY(deltaY),
+			   _startX(startX),
+			   _startY(startY),
+			   _iterCountX(iterCountX),
+			   _iterCountY(iterCountY),
+			   _data(data)
 	{
-		relX = 0.0f;
-		for (int x = 0; x < _iterCountX; ++x)
-		{
-			_camera.GetRay(relX, relY, ray);
-			if (Intersections::RayAndVoxelGrid(ray, *_model, intersection))
-			{
-				Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, *_light);
-				uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
-				_data[index] = *(uint32_t*)(tmp);
-			}
-			else
-			{
-				uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };
-				_data[index] = *(uint32_t*)(tmp);
-			}
-
-			++index;
-			relX += _deltaX;
-		}
-
-		relY -= _deltaY;
+		setJobName("TracingJob");
 	}
-}
+
+	void execute() override
+	{
+		Ray ray;
+		RayHit intersection;
+
+		float relX = _startX * _deltaX;
+		float relY = (_startY + _iterCountY) * _deltaY;
+		int index = 0;
+
+		for (int y = 0; y < _iterCountY; ++y)
+		{
+			relX = 0.0f;
+			for (int x = 0; x < _iterCountX; ++x)
+			{
+				_camera.GetRay(relX, relY, ray);
+				if (Intersections::RayAndVoxelGrid(ray, *_model, intersection))
+				{
+					Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, *_light);
+					//uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
+					_data[index] = (uint32_t)(color.x * 255)
+						| (uint32_t)(color.y * 255) << 8
+						| (uint32_t)(color.z * 255) << 16
+						| 0xFF << 24;
+				}
+				else
+				{
+					//uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };
+					_data[index] = (uint32_t)(Math::Abs(ray.Direction.x) * 100)
+						| (uint32_t)(Math::Abs(ray.Direction.y) * 100) << 8
+						| (uint32_t)(Math::Abs(ray.Direction.z) * 100) << 16
+						| 0xFF << 24;
+				}
+
+				++index;
+				relX += _deltaX;
+			}
+
+			relY -= _deltaY;
+		}
+	}
+};
 
 //-----------------------------------------------------------------------------
 
-RayTracerSystem::RayTracerSystem(Lumix::IAllocator& allocator)
-	: _allocator(allocator),
-	_job_allocator(_allocator),
-	_mtjd_manager(allocator),
-	_sync_point(true, allocator)
+class RayTracerSystemImpl : public RayTracerSystem
 {
+private:
+	Lumix::Debug::Allocator _allocator;
+	Lumix::FreeList<TracingJob, 8> _job_allocator;
+	Lumix::MTJD::Manager _mtjd_manager;
+	Lumix::MTJD::Group _sync_point;
+
+	Camera _camera;
+	Lumix::Texture* _texture;
+	bool _isReady = false;
+
 	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
-	ColorSampler* sampAmb = LUMIX_NEW(_allocator, ColorSampler)(Vector3(0.05f, 0.05f, 0.05f));
-	ColorSampler* sampDiff = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));
-	LambertShader* shad = LUMIX_NEW(_allocator, LambertShader)(sampAmb, sampDiff);
-	_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
-
-	_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
-	_voxelWord->ObjMaterial = _objectMaterial;
-
-	_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -1, -1));
+	Material* _objectMaterial;
+	VoxelModel* _voxelWord;
+	DirectionalLight* _light;
 	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
-}
 
-RayTracerSystem::~RayTracerSystem()
-{
-	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
-	LambertShader* sh = static_cast<LambertShader*>(_objectMaterial->MaterialShader);
-	LUMIX_DELETE(_allocator, sh->AmbientSampler);
-	LUMIX_DELETE(_allocator, sh->DiffuseSampler);
-	LUMIX_DELETE(_allocator, _objectMaterial->MaterialShader);
-	LUMIX_DELETE(_allocator, _objectMaterial);
-	LUMIX_DELETE(_allocator, _light);
-	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
-}
-
-void RayTracerSystem::SetTexture(Lumix::Texture* texture)
-{
-	_texture = texture;
-}
-
-void RayTracerSystem::Update(const float &deltaTime)
-{
-	if (!_isReady)
-		return;
-
-	ASSERT(_texture->getBytesPerPixel() == 4);
-	int width = _texture->getWidth();
-	int height = _texture->getHeight();
-	uint32_t* data = (uint32_t*)(_texture->getData());
-	int cpu_count = (int)_mtjd_manager.getCpuThreadsCount();
-
-	Ray ray;
-	RayHit intersection;
-	
-	float deltaX = 1.0f / width;
-	float deltaY = 1.0f / height;
-
-	int index = 0;
-	TracingJob* jobs[4];
-
-	for (int i = 0; i < cpu_count; ++i)
+public:
+	RayTracerSystemImpl(Lumix::IAllocator& allocator)
+		: _allocator(allocator),
+		_job_allocator(_allocator),
+		_mtjd_manager(allocator),
+		_sync_point(true, allocator)
 	{
-		index = i * 64 * height;
+		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
+		ColorSampler* sampAmb = LUMIX_NEW(_allocator, ColorSampler)(Vector3(0.05f, 0.05f, 0.05f));
+		ColorSampler* sampDiff = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));
+		LambertShader* shad = LUMIX_NEW(_allocator, LambertShader)(sampAmb, sampDiff);
+		_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
 
-		TracingJob* tj = _job_allocator.newObject<TracingJob>(_camera,
-															  _voxelWord,
-															  _light,
-															  deltaX,
-															  deltaY,
-															  0,
-															  64 * (cpu_count - i - 1),
-															  width,
-															  64,
-															  &data[index],
-															  _mtjd_manager,
-															  _allocator,
-															  _job_allocator);
-		tj->addDependency(&_sync_point);
-		jobs[i] = tj;
+		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
+		_voxelWord->ObjMaterial = _objectMaterial;
+
+		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -1, -1));
+		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	}
 
-	for (int i = 0; i < cpu_count; ++i)
+	~RayTracerSystemImpl()
 	{
-		_mtjd_manager.schedule(jobs[i]);
+		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
+		LambertShader* sh = static_cast<LambertShader*>(_objectMaterial->MaterialShader);
+		LUMIX_DELETE(_allocator, sh->AmbientSampler);
+		LUMIX_DELETE(_allocator, sh->DiffuseSampler);
+		LUMIX_DELETE(_allocator, _objectMaterial->MaterialShader);
+		LUMIX_DELETE(_allocator, _objectMaterial);
+		LUMIX_DELETE(_allocator, _light);
+		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	}
 
-	_sync_point.sync();
+	Lumix::IAllocator& getAllocator() { return _allocator; }
 
-	_texture->onDataUpdated(0, 0, width, height);
+	virtual void SetTexture(Lumix::Texture* texture) override
+	{
+		_texture = texture;
+	}
+
+	virtual void Update(const float &deltaTime) override
+	{
+		if (!_isReady)
+			return;
+
+		ASSERT(_texture->getBytesPerPixel() == 4);
+
+		int width = _texture->getWidth();
+		int height = _texture->getHeight();
+		int cpu_count = (int)_mtjd_manager.getCpuThreadsCount();
+		int linesPerThread = (int)Math::Ceil(height / (float)cpu_count);
+
+		uint32_t* data = (uint32_t*)(_texture->getData());
+
+		Ray ray;
+		RayHit intersection;
+
+		float deltaX = 1.0f / width;
+		float deltaY = 1.0f / height;
+
+		int index = 0;
+		TracingJob* jobs[4];
+
+		for (int i = 0; i < cpu_count; ++i)
+		{
+			index = i * linesPerThread * height;
+
+			TracingJob* tj = _job_allocator.newObject<TracingJob>(_camera,
+																  _voxelWord,
+																  _light,
+																  deltaX,
+																  deltaY,
+																  0,
+																  linesPerThread * (cpu_count - i - 1),
+																  width,
+																  linesPerThread,
+																  &data[index],
+																  _mtjd_manager,
+																  _allocator,
+																  _job_allocator);
+			tj->addDependency(&_sync_point);
+			jobs[i] = tj;
+		}
+
+		for (int i = 0; i < cpu_count; ++i)
+		{
+			_mtjd_manager.schedule(jobs[i]);
+		}
+
+		_sync_point.sync();
+
+		_texture->onDataUpdated(0, 0, width, height);
+	}
+
+	virtual void UpdateCamera(const Lumix::Vec3 &position,
+							  const Lumix::Quat &rotation,
+							  const float &fov,
+							  const float &width,
+							  const float &height,
+							  const float &nearPlane,
+							  const float &farPlane,
+							  const Lumix::Matrix& viewMatrix) override
+	{
+		_camera.Position = position;
+		_camera.Rotation = rotation;
+		_camera.FOV = fov;
+		_camera.Width = width;
+		_camera.Height = height;
+		_camera.NearPlane = nearPlane;
+		_camera.FarPlane = farPlane;
+		_camera.OnChanged();
+	}
+
+	virtual inline void SetIsReady(bool isReady) override
+	{
+		_isReady = isReady;
+	}
+
+	virtual inline bool GetIsReady() const override
+	{
+		return _isReady;
+	}
+};
+
+//-----------------------------------------------------------------------------
+
+RayTracerSystem* RayTracerSystem::create(Lumix::IAllocator& allocator)
+{
+	return allocator.newObject<RayTracerSystemImpl>(allocator);
 }
 
-void RayTracerSystem::UpdateCamera(const Lumix::Vec3 &position,
-	const Lumix::Quat &rotation,
-	const float &fov,
-	const float &width,
-	const float &height,
-	const float &nearPlane,
-	const float &farPlane,
-	const Lumix::Matrix& viewMatrix)
+
+void RayTracerSystem::destroy(RayTracerSystem& rayTracerSystem)
 {
-	_camera.Position = position;
-	_camera.Rotation = rotation;
-	_camera.FOV = fov;
-	_camera.Width = width;
-	_camera.Height = height;
-	_camera.NearPlane = nearPlane;
-	_camera.FarPlane = farPlane;
-	_camera.OnChanged();
+	static_cast<RayTracerSystemImpl&>(rayTracerSystem).getAllocator().deleteObject(&rayTracerSystem);
 }
 
 } // ~namespace LumixRayTracer
