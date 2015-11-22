@@ -1,6 +1,10 @@
 #pragma once
 
 #include "Debug/allocator.h"
+#include "core/free_list.h"
+
+#include "core/MTJD/manager.h"
+#include "core/MTJD/job.h"
 
 #include "camera.h"
 
@@ -16,18 +20,60 @@ class Material;
 class VoxelModel;
 class DirectionalLight;
 
+
+
+
+class TracingJob : public Lumix::MTJD::Job
+{
+private:
+	Camera& _camera;
+	VoxelModel* _model;
+	DirectionalLight* _light;
+	float _deltaX;
+	float _deltaY;
+	int _startX;
+	int _startY;
+	int _iterCountX;
+	int _iterCountY;
+	uint32_t* _data;
+
+public:
+	TracingJob(Camera& camera,
+			   VoxelModel* model,
+			   DirectionalLight* light,
+			   float deltaX,
+			   float deltaY,
+			   int startX,
+			   int startY,
+			   int iterCountX,
+			   int iterCountY,
+			   uint32_t* data,
+			   Lumix::MTJD::Manager& manager,
+			   Lumix::IAllocator& allocator,
+			   Lumix::IAllocator& job_allocator);
+
+	void execute() override;
+};
+
+//-----------------------------------------------------------------------------
+
 class RayTracerSystem
 {
 private:
 	Lumix::Debug::Allocator _allocator;
+	Lumix::FreeList<TracingJob, 8> _job_allocator;
+	Lumix::MTJD::Manager _mtjd_manager;
+	Lumix::MTJD::Group _sync_point;
 
 	Camera _camera;
 	Lumix::Texture* _texture;
 	bool _isReady = false;
 
+	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	Material* _objectMaterial;
 	VoxelModel* _voxelWord;
 	DirectionalLight* _light;
+	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 
 public:
 	RayTracerSystem(Lumix::IAllocator& allocator);
@@ -46,7 +92,7 @@ public:
 		const Lumix::Matrix& viewMatrix);
 
 	inline void SetIsReady(bool isReady);
-	inline bool GetIsReady();
+	inline bool GetIsReady() const;
 };
 
 inline void RayTracerSystem::SetIsReady(bool isReady)
@@ -54,7 +100,7 @@ inline void RayTracerSystem::SetIsReady(bool isReady)
 	_isReady = isReady;
 }
 
-inline bool RayTracerSystem::GetIsReady()
+inline bool RayTracerSystem::GetIsReady() const
 {
 	return _isReady;
 }
