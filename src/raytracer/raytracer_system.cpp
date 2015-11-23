@@ -86,6 +86,16 @@ public:
 				if (Intersections::RayAndVoxelGrid(ray, *_model, intersection))
 				{
 					Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, *_light);
+
+					//shadow
+					ray.Position = intersection.Position - intersection.Normal * 0.001f;
+					ray.Direction = -_light->Direction;
+					RayHit shadowHit;
+					if (Intersections::RayAndVoxelGrid(ray, *_model, shadowHit))
+					{
+						color *= 0.0f;
+					}
+					
 					//uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
 					_data[index] = (uint32_t)(color.x * 255)
 						| (uint32_t)(color.y * 255) << 8
@@ -138,7 +148,7 @@ public:
 		_sync_point(true, allocator)
 	{
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
-		ColorSampler* sampAmb = LUMIX_NEW(_allocator, ColorSampler)(Vector3(0.05f, 0.05f, 0.05f));
+		ColorSampler* sampAmb = LUMIX_NEW(_allocator, ColorSampler)(Vector3(0.1f, 0.1f, 0.1f));
 		ColorSampler* sampDiff = LUMIX_NEW(_allocator, ColorSampler)(Vector3(1.0f, 1.0f, 1.0f));
 		LambertShader* shad = LUMIX_NEW(_allocator, LambertShader)(sampAmb, sampDiff);
 		_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
@@ -146,7 +156,7 @@ public:
 		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
 		_voxelWord->ObjMaterial = _objectMaterial;
 
-		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -1, -1));
+		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -2, -1).normalized());
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	}
 
