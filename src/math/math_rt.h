@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 namespace LumixRayTracer
 {
 
@@ -78,10 +80,20 @@ inline float Floor(const float number)
 
 inline float Mod(const float numer, const float denom)
 {
-	return fmod(numer, denom);
+	return fmodf(numer, denom);
 }
 
 //-------------------------------------------------------------------
+
+inline float Sin(const float angle)
+{
+	return sinf(angle);
+}
+
+inline float Cos(const float angle)
+{
+	return cosf(angle);
+}
 
 inline float Tan(const float angle)
 {

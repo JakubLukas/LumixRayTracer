@@ -92,7 +92,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\..\..\LumixEngine\projects\Debug\renderer.lib;..\..\..\LumixEngine\projects\Debug\engine.lib;..\..\..\LumixEngine\projects\Debug\editor.lib;..\..\..\LumixEngine\external\bgfx\lib\win32\bgfx$(Configuration).lib;Debug\math.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\LumixEngine\projects\$(Configuration)\renderer.lib;..\..\..\LumixEngine\projects\$(Configuration)\engine.lib;..\..\..\LumixEngine\projects\$(Configuration)\editor.lib;..\..\..\LumixEngine\external\bgfx\lib\vs2013\win32\bgfx$(Configuration).lib;$(Configuration)\math.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -113,7 +113,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\..\..\LumixEngine\projects\Release\renderer.lib;..\..\..\LumixEngine\projects\Release\engine.lib;..\..\..\LumixEngine\projects\Release\editor.lib;..\..\..\LumixEngine\external\bgfx\lib\win32\bgfx$(Configuration).lib;Release\math.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\LumixEngine\projects\$(Configuration)\renderer.lib;..\..\..\LumixEngine\projects\$(Configuration)\engine.lib;..\..\..\LumixEngine\projects\$(Configuration)\editor.lib;..\..\..\LumixEngine\external\bgfx\lib\vs2013\win32\bgfx$(Configuration).lib;$(Configuration)\math.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

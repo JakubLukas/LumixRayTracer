@@ -13,6 +13,7 @@
 #include "universe/universe.h"
 
 #include "raytracer_system.h"
+#include "camera.h"
 
 namespace LumixRayTracer
 {
@@ -47,7 +48,7 @@ struct RayTracerPluginImpl : public RayTracerPlugin
 
 	~RayTracerPluginImpl()
 	{
-		RayTracerSystem::destroy(rayTracerSystem);
+		RayTracerSystem::destroy(*rayTracerSystem);
 	}
 
 
@@ -96,7 +97,7 @@ struct RayTracerPluginImpl : public RayTracerPlugin
 		_texture = _material->getTexture(0);
 		_texture->addDataReference();
 		_texture->onLoaded<RayTracerPluginImpl, &RayTracerPluginImpl::onTextureLoaded>(this);
-		rayTracerSystem.SetTexture(_texture);
+		rayTracerSystem->SetTexture(_texture);
 	}
 
 	void unloadTexture()
@@ -115,7 +116,7 @@ struct RayTracerPluginImpl : public RayTracerPlugin
 		switch (new_state)
 		{
 			case Lumix::Resource::State::EMPTY:
-				rayTracerSystem.SetIsReady(false);
+				rayTracerSystem->SetIsReady(false);
 				break;
 			case Lumix::Resource::State::READY:
 				loadTexture();
@@ -131,10 +132,10 @@ struct RayTracerPluginImpl : public RayTracerPlugin
 		switch (new_state)
 		{
 			case Lumix::Resource::State::EMPTY:
-				rayTracerSystem.SetIsReady(false);
+				rayTracerSystem->SetIsReady(false);
 				break;
 			case Lumix::Resource::State::READY:
-				rayTracerSystem.SetIsReady(true);
+				rayTracerSystem->SetIsReady(true);
 				break;
 			default:
 				ASSERT(false);
@@ -148,23 +149,22 @@ struct RayTracerPluginImpl : public RayTracerPlugin
 		if (_editor == nullptr) return;
 
 		updateCamera();
-		rayTracerSystem.Update(deltaTime);
+		rayTracerSystem->Update(deltaTime);
 	}
 
 	void updateCamera()
 	{
 		auto* renderScene = static_cast<Lumix::RenderScene*>(_editor->getScene(LumixRayTracer::RENDERER_CRC));
+		Camera& cam = rayTracerSystem->GetCamera();
 
-		Lumix::Vec3 pos = _editor->getUniverse()->getPosition(cameraUid.entity);
-		Lumix::Quat rot = _editor->getUniverse()->getRotation(cameraUid.entity);
-		float fov = renderScene->getCameraFOV(cameraUid.index);
-		float width = renderScene->getCameraWidth(cameraUid.index);
-		float height = renderScene->getCameraHeight(cameraUid.index);
-		float nearPlane = renderScene->getCameraNearPlane(cameraUid.index);
-		float farPlane = renderScene->getCameraFarPlane(cameraUid.index);
-		Lumix::Matrix mat = _editor->getUniverse()->getMatrix(cameraUid.entity);
-
-		rayTracerSystem.UpdateCamera(pos, rot, fov, width, height, nearPlane, farPlane, mat);
+		cam.Position = _editor->getUniverse()->getPosition(cameraUid.entity);
+		cam.Rotation = _editor->getUniverse()->getRotation(cameraUid.entity);
+		cam.FOV = renderScene->getCameraFOV(cameraUid.index);
+		cam.Width = renderScene->getCameraWidth(cameraUid.index);
+		cam.Height = renderScene->getCameraHeight(cameraUid.index);
+		cam.NearPlane = renderScene->getCameraNearPlane(cameraUid.index);
+		cam.FarPlane = renderScene->getCameraFarPlane(cameraUid.index);
+		cam.OnChanged();
 	}
 
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lumix.h"
-#include "engine/core/vec4.h"
+#include "engine/core/vec.h"
 
 namespace LumixRayTracer
 {

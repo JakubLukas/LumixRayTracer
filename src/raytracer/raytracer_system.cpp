@@ -14,6 +14,14 @@
 #include "voxels/voxel_model.h"
 #include "lightning/directional_light.h"
 
+#include "core/iallocator.h"
+#include "core/free_list.h"
+
+#include "core/MTJD/manager.h"
+#include "core/MTJD/job.h"
+
+#include "camera.h"
+
 
 namespace LumixRayTracer
 {
@@ -107,9 +115,9 @@ public:
 class RayTracerSystemImpl : public RayTracerSystem
 {
 private:
-	Lumix::Debug::Allocator _allocator;
+	Lumix::IAllocator& _allocator;
 	Lumix::FreeList<TracingJob, 8> _job_allocator;
-	Lumix::MTJD::Manager _mtjd_manager;
+	Lumix::MTJD::Manager* _mtjd_manager;
 	Lumix::MTJD::Group _sync_point;
 
 	Camera _camera;
@@ -126,7 +134,7 @@ public:
 	RayTracerSystemImpl(Lumix::IAllocator& allocator)
 		: _allocator(allocator),
 		_job_allocator(_allocator),
-		_mtjd_manager(allocator),
+		_mtjd_manager(Lumix::MTJD::Manager::create(allocator)),
 		_sync_point(true, allocator)
 	{
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
@@ -152,6 +160,8 @@ public:
 		LUMIX_DELETE(_allocator, _objectMaterial);
 		LUMIX_DELETE(_allocator, _light);
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
+
+		Lumix::MTJD::Manager::destroy(*_mtjd_manager);
 	}
 
 	Lumix::IAllocator& getAllocator() { return _allocator; }
@@ -170,7 +180,7 @@ public:
 
 		int width = _texture->getWidth();
 		int height = _texture->getHeight();
-		int cpu_count = (int)_mtjd_manager.getCpuThreadsCount();
+		int cpu_count = (int)_mtjd_manager->getCpuThreadsCount();
 		int linesPerThread = (int)Math::Ceil(height / (float)cpu_count);
 
 		uint32_t* data = (uint32_t*)(_texture->getData());
@@ -188,7 +198,7 @@ public:
 		{
 			index = i * linesPerThread * height;
 
-			TracingJob* tj = _job_allocator.newObject<TracingJob>(_camera,
+			TracingJob* tj = LUMIX_NEW(_job_allocator, TracingJob)(_camera,
 																  _voxelWord,
 																  _light,
 																  deltaX,
@@ -198,7 +208,7 @@ public:
 																  width,
 																  linesPerThread,
 																  &data[index],
-																  _mtjd_manager,
+																  *_mtjd_manager,
 																  _allocator,
 																  _job_allocator);
 			tj->addDependency(&_sync_point);
@@ -207,7 +217,7 @@ public:
 
 		for (int i = 0; i < cpu_count; ++i)
 		{
-			_mtjd_manager.schedule(jobs[i]);
+			_mtjd_manager->schedule(jobs[i]);
 		}
 
 		_sync_point.sync();
@@ -215,23 +225,9 @@ public:
 		_texture->onDataUpdated(0, 0, width, height);
 	}
 
-	virtual void UpdateCamera(const Lumix::Vec3 &position,
-							  const Lumix::Quat &rotation,
-							  const float &fov,
-							  const float &width,
-							  const float &height,
-							  const float &nearPlane,
-							  const float &farPlane,
-							  const Lumix::Matrix& viewMatrix) override
+	virtual Camera& GetCamera() override
 	{
-		_camera.Position = position;
-		_camera.Rotation = rotation;
-		_camera.FOV = fov;
-		_camera.Width = width;
-		_camera.Height = height;
-		_camera.NearPlane = nearPlane;
-		_camera.FarPlane = farPlane;
-		_camera.OnChanged();
+		return _camera;
 	}
 
 	virtual inline void SetIsReady(bool isReady) override
@@ -249,13 +245,13 @@ public:
 
 RayTracerSystem* RayTracerSystem::create(Lumix::IAllocator& allocator)
 {
-	return allocator.newObject<RayTracerSystemImpl>(allocator);
+	return LUMIX_NEW(allocator, RayTracerSystemImpl)(allocator);
 }
 
 
 void RayTracerSystem::destroy(RayTracerSystem& rayTracerSystem)
 {
-	static_cast<RayTracerSystemImpl&>(rayTracerSystem).getAllocator().deleteObject(&rayTracerSystem);
+	LUMIX_DELETE(static_cast<RayTracerSystemImpl&>(rayTracerSystem).getAllocator(), &rayTracerSystem);
 }
 
 } // ~namespace LumixRayTracer

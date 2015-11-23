@@ -12,7 +12,7 @@
 namespace LumixRayTracer
 {
 
-struct Camera
+class Camera
 {
 private:
 	float _fovTan;

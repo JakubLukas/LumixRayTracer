@@ -3,11 +3,8 @@
 /projects/LumixRayTracer/raytracer.dir
 /projects/LumixRayTracer/LumixRayTracer.opensdf
 /projects/LumixRayTracer/math.dir
-/projects/UnitTest_math/Debug
 /projects/LumixRayTracer/LumixRayTracer.sdf
 /projects/LumixRayTracer/LumixRayTracer.v12.suo
-/projects/UnitTest_math/Release
-/projects/UnitTest_math/UnitTest_math.vcxproj.user
-/projects/UnitTest_math/tests.dir
 /projects/LumixRayTracer/ipch
 /projects/LumixRayTracer/*.user
+/projects/LumixRayTracer/Release
