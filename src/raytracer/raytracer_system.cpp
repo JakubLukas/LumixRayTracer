@@ -88,7 +88,7 @@ public:
 					Vector3 color = intersection.HitObject->ObjMaterial->MaterialShader->GetColor(intersection.Position, intersection.Normal, _camera, *_light);
 
 					//shadow
-					ray.Position = intersection.Position - intersection.Normal * 0.001f;
+					ray.Position = intersection.Position + intersection.Normal * 0.001f;
 					ray.Direction = -_light->Direction;
 					RayHit shadowHit;
 					if (Intersections::RayAndVoxelGrid(ray, *_model, shadowHit))

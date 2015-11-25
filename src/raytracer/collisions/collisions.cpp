@@ -289,12 +289,14 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 		Math::Abs(VoxelModel::VOXEL_SIZE_Z / ray.Direction.z)
 	};
 
+	float lastT = 0.0f;
+
 	for (;;)
 	{
 		if (box.GetVoxel(index[0], index[1], index[2]) != 0)
 		{
 			intersection.HitObject = (Model*)&box;
-			intersection.Position = Vector3(index[0], index[1], index[2]);
+			intersection.Position = relStartPosition + lastT * ray.Direction + box.Position;
 			break;
 		}
 
@@ -305,6 +307,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				index[0] += step[0];
 				if (index[0] >= size[0] || index[0] < 0)
 					return false; // outside grid
+				lastT = tMax[0];
 				tMax[0] += tDelta[0];
 				intersection.Normal = Vector3((float)-step[0], 0.0f, 0.0f);
 			}
@@ -313,6 +316,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				index[2] += step[2];
 				if (index[2] >= size[2] || index[2] < 0)
 					return false; // outside grid
+				lastT = tMax[2];
 				tMax[2] += tDelta[2];
 				intersection.Normal = Vector3(0.0f, 0.0f, (float)-step[2]);
 			}
@@ -324,6 +328,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				index[1] += step[1];
 				if (index[1] >= size[1] || index[1] < 0)
 					return false; // outside grid
+				lastT = tMax[1];
 				tMax[1] += tDelta[1];
 				intersection.Normal = Vector3(0.0f, (float)-step[1], 0.0f);
 			}
@@ -332,6 +337,7 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				index[2] += step[2];
 				if (index[2] >= size[2] || index[2] < 0)
 					return false; // outside grid
+				lastT = tMax[2];
 				tMax[2] += tDelta[2];
 				intersection.Normal = Vector3(0.0f, 0.0f, (float)-step[2]);
 			}
