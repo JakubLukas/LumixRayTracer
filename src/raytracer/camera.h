@@ -17,6 +17,9 @@ class Camera
 private:
 	float _fovTan;
 	float _ratio;
+	Vector3 _up;
+	Vector3 _right;
+	Vector3 _forward;
 public:
 	Vector3 Position;
 	Quaternion Rotation;
@@ -40,6 +43,11 @@ public:
 		ray.Direction.normalize();
 
 		ray.Position = Position;
+
+		/*float u = x * 2.0f / Width - 1.0f;
+		float v = y * 2.0f / Height - 1.0f;
+		ray.Position = _right * u + _up * v;
+		ray.Direction = Vector3::Cross(_right, _up).normalized();*/
 	}
 
 	Vector3 GetDirection() const
@@ -53,6 +61,10 @@ public:
 		_fovTan = Math::Tan(FOV);
 
 		_ratio = Width / Height;
+
+		_up = Rotation * Vector3(0.0f, 1.0f, 0.0f);
+		_right = Rotation * Vector3(1.0f, 0.0f, 0.0f);
+		_forward = NearPlane * Vector3(0.0f, 0.0f, -1.0f);
 	}
 };
 

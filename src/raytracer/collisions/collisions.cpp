@@ -232,7 +232,8 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 		(int)Math::Floor(relStartPosition.y / VoxelModel::VOXEL_SIZE_Y),
 		(int)Math::Floor(relStartPosition.z / VoxelModel::VOXEL_SIZE_Z)
 	};
-	intersection.Position = Vector3(index[0], index[1], index[2]);
+	intersection.Position = relStartPosition + box.Position;
+	intersection.HitObject = (Model*)&box;
 
 	int size[3] = {
 		(int)box.GetSizeX(),

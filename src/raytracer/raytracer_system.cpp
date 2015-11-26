@@ -153,7 +153,7 @@ public:
 		LambertShader* shad = LUMIX_NEW(_allocator, LambertShader)(sampAmb, sampDiff);
 		_objectMaterial = LUMIX_NEW(_allocator, Material)(shad);
 
-		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(10, 10, 10);
+		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(100, 10, 100);
 		_voxelWord->ObjMaterial = _objectMaterial;
 
 		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -2, -1).normalized());
