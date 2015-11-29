@@ -36,6 +36,9 @@ bool RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection)
 				// distance from pc to i1
 			float dist = Math::Sqrt(sphere.Radius*sphere.Radius - (pc - sphere.Position).length()*(pc - sphere.Position).length());
 			float di1 = dist - (pc - ray.Position).length();
+			if (di1 > ray.MaxDistance)
+				return false;
+
 			intersection.Position = ray.Position + ray.Direction * di1;
 			
 		}
@@ -53,6 +56,8 @@ bool RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection)
 			float dist = Math::Sqrt(Math::Pow(sphere.Radius, 2.0f) - Math::Pow((pc - sphere.Position).length(), 2.0f));
 			float diDist = ((vpc.length() > sphere.Radius) ? -1 : 1) * dist;// -dist if origin is outside sphere else +dist
 			float di1 = (pc - ray.Position).length() + diDist;
+			if (di1 > ray.MaxDistance)
+				return false;
 
 			intersection.Position = ray.Position + ray.Direction * di1;
 		}
@@ -95,10 +100,7 @@ bool RayAndBox(const Ray &ray, const Box &box, RayHit &intersection)
 	float tmin = Math::Max(Math::Min(t[0], t[1]), Math::Min(t[2], t[3]), Math::Min(t[4], t[5]));
 	float tmax = Math::Min(Math::Max(t[0], t[1]), Math::Max(t[2], t[3]), Math::Max(t[4], t[5]));
 
-	if (tmax < 0.0f) // box is behind
-		return false;
-
-	if (tmin > tmax) // ray doesn't intersect box
+	if (tmax < 0.0f || tmin > tmax || tmin > ray.MaxDistance) // box is behind
 		return false;
 
 	intersection.Position = ray.Position + ray.Direction * tmin;
@@ -147,7 +149,7 @@ bool RayAndVoxelModel(const Ray &ray, const Vector3 &vmin, const Vector3 &vmax, 
 	t[6] = Math::Max(Math::Min(t[0], t[1]), Math::Min(t[2], t[3]), Math::Min(t[4], t[5]));
 	t[7] = Math::Min(Math::Max(t[0], t[1]), Math::Max(t[2], t[3]), Math::Max(t[4], t[5]));
 
-	if (t[7] < 0.0f || t[6] > t[7])
+	if (t[7] < 0.0f || t[6] > t[7] || t[6] > ray.MaxDistance)
 		return false;
 
 	param = t[6];
@@ -343,6 +345,9 @@ bool RayAndVoxelGrid(const Ray &ray, const VoxelModel &box, RayHit &intersection
 				intersection.Normal = Vector3(0.0f, 0.0f, (float)-step[2]);
 			}
 		}
+
+		if (lastT > ray.MaxDistance)
+			return false;
 	}
 
 	return true;

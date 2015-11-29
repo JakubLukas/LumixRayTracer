@@ -16,7 +16,6 @@ class Camera
 {
 private:
 	float _fovTan;
-	float _ratio;
 	Vector3 _up;
 	Vector3 _right;
 	Vector3 _forward;
@@ -36,18 +35,11 @@ public:
 
 	void GetRay(const float x, const float y, Ray &ray) const
 	{
-		float px = (2.0f * x - 1.0f) * _fovTan * _ratio;
-		float py = (1.0f - 2.0f * y) * _fovTan;
-
-		ray.Direction = Rotation * Vector3(px, py, -1.0f);
-		ray.Direction.normalize();
-
-		ray.Position = Position;
-
-		/*float u = x * 2.0f / Width - 1.0f;
-		float v = y * 2.0f / Height - 1.0f;
-		ray.Position = _right * u + _up * v;
-		ray.Direction = Vector3::Cross(_right, _up).normalized();*/
+		float u = (2.0f * x - 1.0f) * _fovTan;
+		float v = (1.0f - 2.0f * y) * _fovTan;
+		ray.Position = Position + _forward + _right * u + _up * v;
+		ray.Direction = (_forward + _right * u + _up * v).normalized();
+		ray.MaxDistance = FarPlane - NearPlane;
 	}
 
 	Vector3 GetDirection() const
@@ -58,13 +50,11 @@ public:
 	void OnChanged()
 	{
 		FOV = Math::RadFromDeg(FOV);
-		_fovTan = Math::Tan(FOV);
-
-		_ratio = Width / Height;
+		_fovTan = Math::Tan(FOV) * NearPlane;
 
 		_up = Rotation * Vector3(0.0f, 1.0f, 0.0f);
 		_right = Rotation * Vector3(1.0f, 0.0f, 0.0f);
-		_forward = NearPlane * Vector3(0.0f, 0.0f, -1.0f);
+		_forward = Vector3::Cross(_up, _right) * NearPlane;
 	}
 };
 
