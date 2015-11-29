@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lumix.h"
 #include <math.h>
 
 namespace LumixRayTracer
@@ -98,6 +99,26 @@ inline float Cos(const float angle)
 inline float Tan(const float angle)
 {
 	return tanf(angle);
+}
+
+inline float Asin(const float angle)
+{
+	return asinf(angle);
+}
+
+inline float Acos(const float angle)
+{
+	return acosf(angle);
+}
+
+inline float Atan(const float angle)
+{
+	return atanf(angle);
+}
+
+inline float Atan2(const float y, const float x)
+{
+	return atan2f(y, x);
 }
 
 } // ~ namespace Math

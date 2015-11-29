@@ -1,9 +1,7 @@
 #pragma once
 
 #include "vector3.h"
-#include "vector4.h"
 #include "quaternion.h"
-#include "matrix44.h"
 #include "math_rt.h"
 
 #include "ray.h"
@@ -38,7 +36,7 @@ public:
 		float u = (2.0f * x - 1.0f) * _fovTan;
 		float v = (1.0f - 2.0f * y) * _fovTan;
 		ray.Position = Position + _forward + _right * u + _up * v;
-		ray.Direction = (_forward + _right * u + _up * v).normalized();
+		ray.Direction = (_forward + _right * u + _up * v).Normalized();
 		ray.MaxDistance = FarPlane - NearPlane;
 	}
 

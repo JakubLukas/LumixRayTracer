@@ -22,20 +22,20 @@ bool RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection)
 	if (Vector3::Dot(vpc, ray.Direction) < 0.0f) // when the sphere is behind the origin p
 	{
 		// note that this case may be dismissed if it is considered that p is outside the sphere 	
-		if (vpc.length() > sphere.Radius)
+		if (vpc.LengthSquared() > sphere.Radius*sphere.Radius)
 		{
 			return false;// there is no intersection
 		}
-		else if (vpc.length() == sphere.Radius)
+		else if (vpc.LengthSquared() == sphere.Radius*sphere.Radius)
 		{
 			intersection.Position = ray.Position;
 		}
 		else // occurs when p is inside the sphere
 		{
-			Vector3 pc = ray.Position + ray.Direction * Vector3::Dot(ray.Direction, vpc) / ray.Direction.length();//projection of c on the line
+			Vector3 pc = ray.Position + ray.Direction * Vector3::Dot(ray.Direction, vpc) / ray.Direction.Length();//projection of c on the line
 				// distance from pc to i1
-			float dist = Math::Sqrt(sphere.Radius*sphere.Radius - (pc - sphere.Position).length()*(pc - sphere.Position).length());
-			float di1 = dist - (pc - ray.Position).length();
+			float dist = Math::Sqrt(sphere.Radius*sphere.Radius - (pc - sphere.Position).Length()*(pc - sphere.Position).Length());
+			float di1 = dist - (pc - ray.Position).Length();
 			if (di1 > ray.MaxDistance)
 				return false;
 
@@ -45,17 +45,17 @@ bool RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection)
 	}
 	else // center of sphere projects on the ray
 	{
-		Vector3 pc = ray.Position + ray.Direction * Vector3::Dot(ray.Direction, vpc) / ray.Direction.length();//projection of c on the line
-		if ((sphere.Position - pc).length() > sphere.Radius)
+		Vector3 pc = ray.Position + ray.Direction * Vector3::Dot(ray.Direction, vpc) / ray.Direction.Length();//projection of c on the line
+		if ((sphere.Position - pc).Length() > sphere.Radius)
 		{
 			return false;// there is no intersection
 		}
 		else
 		{
 			// distance from pc to i1
-			float dist = Math::Sqrt(Math::Pow(sphere.Radius, 2.0f) - Math::Pow((pc - sphere.Position).length(), 2.0f));
-			float diDist = ((vpc.length() > sphere.Radius) ? -1 : 1) * dist;// -dist if origin is outside sphere else +dist
-			float di1 = (pc - ray.Position).length() + diDist;
+			float dist = Math::Sqrt(Math::Pow(sphere.Radius, 2.0f) - Math::Pow((pc - sphere.Position).Length(), 2.0f));
+			float diDist = ((vpc.Length() > sphere.Radius) ? -1 : 1) * dist;// -dist if origin is outside sphere else +dist
+			float di1 = (pc - ray.Position).Length() + diDist;
 			if (di1 > ray.MaxDistance)
 				return false;
 
@@ -63,7 +63,7 @@ bool RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection)
 		}
 	}
 	intersection.Normal = intersection.Position - sphere.Position;
-	intersection.Normal.normalize();
+	intersection.Normal.Normalize();
 	intersection.HitObject = (Model*)&sphere;
 
 	return true;

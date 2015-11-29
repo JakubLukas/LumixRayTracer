@@ -90,6 +90,7 @@ public:
 					//shadow
 					ray.Position = intersection.Position + intersection.Normal * 0.001f;
 					ray.Direction = -_light->Direction;
+					ray.MaxDistance = FLT_MAX;
 					RayHit shadowHit;
 					if (Intersections::RayAndVoxelGrid(ray, *_model, shadowHit))
 					{
@@ -156,7 +157,7 @@ public:
 		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(100, 10, 100);
 		_voxelWord->ObjMaterial = _objectMaterial;
 
-		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -2, -1).normalized());
+		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -2, -1).Normalized());
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	}
 

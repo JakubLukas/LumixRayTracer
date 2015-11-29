@@ -15,13 +15,11 @@
     <ClInclude Include="..\..\src\math\matrix44.h" />
     <ClInclude Include="..\..\src\math\quaternion.h" />
     <ClInclude Include="..\..\src\math\vector3.h" />
-    <ClInclude Include="..\..\src\math\vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\math\matrix44.cpp" />
     <ClCompile Include="..\..\src\math\quaternion.cpp" />
     <ClCompile Include="..\..\src\math\vector3.cpp" />
-    <ClCompile Include="..\..\src\math\vector4.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A3356565-E638-4E1A-8FCE-E5A3066AD191}</ProjectGuid>

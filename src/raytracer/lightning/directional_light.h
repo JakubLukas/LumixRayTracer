@@ -17,7 +17,7 @@ public:
 	{ }
 
 	DirectionalLight(const Vector3 &direction)
-		: Direction(direction.normalized())
+		: Direction(direction.Normalized())
 	{ }
 
 };
