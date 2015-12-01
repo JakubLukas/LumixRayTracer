@@ -12,7 +12,8 @@
 #include "material.h"
 #include "shading/lambert_shader.h"
 #include "voxels/voxel_model.h"
-#include "lightning/directional_light.h"
+#include "lightning/light.h"
+#include "texturing/color_sampler.h"
 
 #include "core/iallocator.h"
 #include "core/free_list.h"
@@ -30,7 +31,7 @@ class TracingJob : public Lumix::MTJD::Job
 private:
 	Camera& _camera;
 	VoxelModel* _model;
-	DirectionalLight* _light;
+	Light* _light;
 	float _deltaX;
 	float _deltaY;
 	int _startX;
@@ -42,7 +43,7 @@ private:
 public:
 	TracingJob(Camera& camera,
 			   VoxelModel* model,
-			   DirectionalLight* light,
+			   Light* light,
 			   float deltaX,
 			   float deltaY,
 			   int startX,
@@ -97,7 +98,6 @@ public:
 						color *= 0.0f;
 					}
 					
-					//uint8_t tmp[4] = { (uint8_t)(color.x * 255), (uint8_t)(color.y * 255), (uint8_t)(color.z * 255), 0xFF };
 					_data[index] = (uint32_t)(color.x * 255)
 						| (uint32_t)(color.y * 255) << 8
 						| (uint32_t)(color.z * 255) << 16
@@ -105,7 +105,6 @@ public:
 				}
 				else
 				{
-					//uint8_t tmp[4] = { (uint8_t)(Math::Abs(ray.Direction.x) * 100), (uint8_t)(Math::Abs(ray.Direction.y) * 100), (uint8_t)(Math::Abs(ray.Direction.z) * 100), 0xFF };
 					_data[index] = (uint32_t)(Math::Abs(ray.Direction.x) * 100)
 						| (uint32_t)(Math::Abs(ray.Direction.y) * 100) << 8
 						| (uint32_t)(Math::Abs(ray.Direction.z) * 100) << 16
@@ -138,7 +137,7 @@ private:
 	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	Material* _objectMaterial;
 	VoxelModel* _voxelWord;
-	DirectionalLight* _light;
+	Light* _light;
 	// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 
 public:

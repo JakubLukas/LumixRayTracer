@@ -3,7 +3,7 @@
 #include "shader.h"
 #include "texturing/sampler.h"
 #include "vector3.h"
-#include "lightning/directional_light.h"
+#include "lightning/light.h"
 
 namespace LumixRayTracer
 {

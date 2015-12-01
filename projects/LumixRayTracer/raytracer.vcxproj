@@ -19,9 +19,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\camera.h" />
     <ClInclude Include="..\..\src\raytracer\collisions\collisions.h" />
-    <ClInclude Include="..\..\src\raytracer\lightning\directional_light.h" />
     <ClInclude Include="..\..\src\raytracer\lightning\light.h" />
-    <ClInclude Include="..\..\src\raytracer\lightning\point_light.h" />
     <ClInclude Include="..\..\src\raytracer\material.h" />
     <ClInclude Include="..\..\src\raytracer\model.h" />
     <ClInclude Include="..\..\src\raytracer\primitives\box.h" />

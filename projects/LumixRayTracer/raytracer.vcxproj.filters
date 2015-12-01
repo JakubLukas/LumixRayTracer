@@ -26,9 +26,6 @@
     <ClInclude Include="..\..\src\raytracer\texturing\sampler.h">
       <Filter>texturing</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\raytracer\lightning\directional_light.h">
-      <Filter>lightning</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\raytracer\lightning\light.h">
       <Filter>lightning</Filter>
     </ClInclude>
@@ -56,9 +53,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\raytracer\shading\lambert_shader.h">
       <Filter>shading</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\raytracer\lightning\point_light.h">
-      <Filter>lightning</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
