@@ -34,7 +34,7 @@ bool RayAndSphere(const Ray &ray, const Sphere &sphere, RayHit &intersection)
 		{
 			Vector3 pc = ray.Position + ray.Direction * Vector3::Dot(ray.Direction, vpc) / ray.Direction.Length();//projection of c on the line
 				// distance from pc to i1
-			float dist = Math::Sqrt(sphere.Radius*sphere.Radius - (pc - sphere.Position).Length()*(pc - sphere.Position).Length());
+			float dist = Math::Sqrt(sphere.Radius*sphere.Radius - (pc - sphere.Position).LengthSquared());
 			float di1 = dist - (pc - ray.Position).Length();
 			if (di1 > ray.MaxDistance)
 				return false;
