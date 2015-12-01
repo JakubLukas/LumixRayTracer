@@ -35,8 +35,10 @@ public:
 	{
 		float u = (2.0f * x - 1.0f) * _fovTan;
 		float v = (1.0f - 2.0f * y) * _fovTan;
-		ray.Position = Position + _forward + _right * u + _up * v;
-		ray.Direction = (_forward + _right * u + _up * v).Normalized();
+
+		ray.Direction = _forward + _right * u + _up * v;
+		ray.Position = Position + ray.Direction;
+		ray.Direction.Normalize();
 		ray.MaxDistance = FarPlane - NearPlane;
 	}
 
