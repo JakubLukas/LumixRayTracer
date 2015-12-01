@@ -89,7 +89,7 @@ public:
 
 					//shadow
 					ray.Position = intersection.Position + intersection.Normal * 0.001f;
-					ray.Direction = -_light->Direction;
+					ray.Direction = -_light->GetDirection(ray.Position);
 					ray.MaxDistance = FLT_MAX;
 					RayHit shadowHit;
 					if (Intersections::RayAndVoxelGrid(ray, *_model, shadowHit))

@@ -2,7 +2,6 @@
 
 #include "shader.h"
 #include "texturing/sampler.h"
-#include "texturing/color_sampler.h"
 #include "vector3.h"
 #include "lightning/directional_light.h"
 
@@ -30,18 +29,20 @@ public:
 	{
 	}
 
-	virtual Vector3 GetColor(const Vector3 &point, const Vector3 &normal, const Camera &camera, const DirectionalLight &light) override
+	virtual Vector3 GetColor(const Vector3 &point, const Vector3 &normal, const Camera &camera, const Light &light) override
 	{
 		ASSERT(AmbientSampler != nullptr);
 		ASSERT(DiffuseSampler != nullptr);
 		ASSERT(SpecularSampler != nullptr);
 
-		float lDotN = Vector3::Dot(-light.Direction, normal);
+		Vector3 lightDir = light.GetDirection(point);
+
+		float lDotN = Vector3::Dot(-lightDir, normal);
 
 		float spec = 0.0f;
 		if (lDotN > 0.0f)
 		{
-			Vector3 r = 2.0f * lDotN * normal + light.Direction;
+			Vector3 r = 2.0f * lDotN * normal + lightDir;
 			float rDotV = Vector3::Dot(r, camera.Position - point);
 			spec = Math::Pow(rDotV, Shininess);
 		}
