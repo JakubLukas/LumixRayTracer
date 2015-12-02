@@ -10,7 +10,7 @@
 #include "renderer/texture.h"
 
 #include "material.h"
-#include "shading/lambert_shader.h"
+#include "shading/shader.h"
 #include "voxels/voxel_model.h"
 #include "lightning/light.h"
 #include "texturing/color_sampler.h"
@@ -156,7 +156,7 @@ public:
 		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(100, 10, 100);
 		_voxelWord->ObjMaterial = _objectMaterial;
 
-		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -2, -1).Normalized());
+		_light = LUMIX_NEW(_allocator, PointLight)(Vector3(-1, -2, -1).Normalized());
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	}
 

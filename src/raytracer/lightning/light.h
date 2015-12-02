@@ -1,12 +1,10 @@
 #pragma once
 
+#include "vector3.h"
+
 
 namespace LumixRayTracer
 {
-struct Vector3;
-
-
-//-----------------------------------------------------------------------------
 
 class Light
 {

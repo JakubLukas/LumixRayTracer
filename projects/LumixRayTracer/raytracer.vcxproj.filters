@@ -17,9 +17,6 @@
     <ClInclude Include="..\..\src\raytracer\shading\shader.h">
       <Filter>shading</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\raytracer\shading\phong_shader.h">
-      <Filter>shading</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h">
       <Filter>texturing</Filter>
     </ClInclude>
@@ -50,9 +47,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\raytracer\voxels\bresenham_full.h">
       <Filter>voxels</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\raytracer\shading\lambert_shader.h">
-      <Filter>shading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
