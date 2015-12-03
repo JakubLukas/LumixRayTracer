@@ -34,8 +34,10 @@ Vector3 LambertShader::GetColor(const Vector3 &point, const Vector3 &normal, con
 	Vector3 lightDir = light.GetDirection(point);
 
 	float lDotN = Vector3::Dot(-lightDir, normal);
-	return AmbientSampler->GetSample(0, 0)
+	Vector3 color = AmbientSampler->GetSample(0, 0)
 		+ DiffuseSampler->GetSample(0, 0) * Math::Max(lDotN, 0.0f);
+
+	return Math::Min(color, 1.0f);
 }
 
 
@@ -79,7 +81,7 @@ Vector3 PhongShader::GetColor(const Vector3 &point, const Vector3 &normal, const
 		+ DiffuseSampler->GetSample(0, 0) * lDotN
 		+ SpecularSampler->GetSample(0, 0) * Math::Clamp(spec, 0.0f, 1.0f);
 
-	return Math::Clamp(color, 0.0f, 1.0f);
+	return Math::Min(color, 1.0f);
 }
 
 

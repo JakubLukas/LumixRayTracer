@@ -153,7 +153,7 @@ public:
 		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(100, 10, 100);
 		_voxelWord->ObjMaterial = _objectMaterial;
 
-		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -2, -1).Normalized());
+		_light = LUMIX_NEW(_allocator, PointLight)(Vector3(1, 60, 1));
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	}
 

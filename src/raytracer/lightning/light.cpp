@@ -13,9 +13,9 @@ PointLight::PointLight(const Vector3 &position)
 {
 }
 
-const Vector3& PointLight::GetDirection(const Vector3& point) const
+Vector3 PointLight::GetDirection(const Vector3& point) const
 {
-	return point - _position;
+	return (point - _position).Normalized();
 }
 
 //-----------------------------------------------------------------------------
@@ -31,7 +31,7 @@ DirectionalLight::DirectionalLight(const Vector3 &direction)
 	_direction.Normalize();
 }
 
-const Vector3& DirectionalLight::GetDirection(const Vector3& point) const
+Vector3 DirectionalLight::GetDirection(const Vector3& point) const
 {
 	return _direction;
 }

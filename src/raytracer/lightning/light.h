@@ -10,7 +10,7 @@ namespace LumixRayTracer
 class Light
 {
 public:
-	virtual const Vector3& GetDirection(const Vector3& point) const = 0;
+	virtual Vector3 GetDirection(const Vector3& point) const = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -24,7 +24,7 @@ public:
 	PointLight();
 	PointLight(const Vector3 &position);
 
-	virtual const Vector3& GetDirection(const Vector3& point) const override;
+	virtual Vector3 GetDirection(const Vector3& point) const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public:
 	DirectionalLight();
 	DirectionalLight(const Vector3 &direction);
 
-	virtual const Vector3& GetDirection(const Vector3& point) const override;
+	virtual Vector3 GetDirection(const Vector3& point) const override;
 };
 
 } // ~ namespace LumixRayTracer

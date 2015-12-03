@@ -13,7 +13,7 @@ namespace LumixRayTracer
 class Camera
 {
 private:
-	float _fovTan;
+	float _fovCache;
 	Vector3 _up;
 	Vector3 _right;
 	Vector3 _forward;
@@ -33,8 +33,8 @@ public:
 
 	void GetRay(const float x, const float y, Ray &ray) const
 	{
-		float u = (2.0f * x - 1.0f) * _fovTan;
-		float v = (1.0f - 2.0f * y) * _fovTan;
+		float u = (2.0f * x - 1.0f) * _fovCache;
+		float v = (1.0f - 2.0f * y) * _fovCache;
 
 		ray.Direction = _forward + _right * u + _up * v;
 		ray.Position = Position + ray.Direction;
@@ -50,7 +50,7 @@ public:
 	void OnChanged()
 	{
 		FOV = Math::RadFromDeg(FOV);
-		_fovTan = Math::Tan(FOV) * NearPlane;
+		_fovCache = Math::Tan(FOV * 0.5f) * NearPlane;
 
 		_up = Rotation * Vector3(0.0f, 1.0f, 0.0f);
 		_right = Rotation * Vector3(1.0f, 0.0f, 0.0f);
