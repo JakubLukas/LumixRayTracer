@@ -5,6 +5,7 @@
 
 namespace LumixRayTracer
 {
+	struct Vector3;
 
 class Light
 {
@@ -20,20 +21,10 @@ private:
 	Vector3 _position;
 
 public:
-	PointLight()
-		: _position(0.0f, 0.0f, 0.0f)
-	{ }
+	PointLight();
+	PointLight(const Vector3 &position);
 
-	PointLight(const Vector3 &position)
-		: _position(position)
-	{
-		_position.Normalize();
-	}
-
-	virtual const Vector3& GetDirection(const Vector3& point) const override
-	{
-		return point - _position;
-	}
+	virtual const Vector3& GetDirection(const Vector3& point) const override;
 };
 
 //-----------------------------------------------------------------------------
@@ -44,20 +35,10 @@ private:
 	Vector3 _direction;
 
 public:
-	DirectionalLight()
-		: _direction(0.0f, -1.0f, 0.0f)
-	{ }
+	DirectionalLight();
+	DirectionalLight(const Vector3 &direction);
 
-	DirectionalLight(const Vector3 &direction)
-		: _direction(direction)
-	{
-		_direction.Normalize();
-	}
-
-	virtual const Vector3& GetDirection(const Vector3& point) const override
-	{
-		return _direction;
-	}
+	virtual const Vector3& GetDirection(const Vector3& point) const override;
 };
 
 } // ~ namespace LumixRayTracer

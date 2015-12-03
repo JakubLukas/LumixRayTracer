@@ -9,6 +9,15 @@
     <ClCompile Include="..\..\src\raytracer\voxels\voxel_model.cpp">
       <Filter>voxels</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\raytracer\shading\shader.cpp">
+      <Filter>shading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\raytracer\lightning\light.cpp">
+      <Filter>lightning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\raytracer\texturing\sampler.cpp">
+      <Filter>texturing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\raytracer\camera.h" />
@@ -16,9 +25,6 @@
     <ClInclude Include="..\..\src\raytracer\raytracer_system.h" />
     <ClInclude Include="..\..\src\raytracer\shading\shader.h">
       <Filter>shading</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h">
-      <Filter>texturing</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\raytracer\texturing\sampler.h">
       <Filter>texturing</Filter>

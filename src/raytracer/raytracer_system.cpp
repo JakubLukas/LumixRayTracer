@@ -13,7 +13,7 @@
 #include "shading/shader.h"
 #include "voxels/voxel_model.h"
 #include "lightning/light.h"
-#include "texturing/color_sampler.h"
+#include "texturing/sampler.h"
 
 #include "core/iallocator.h"
 #include "core/free_list.h"
@@ -42,29 +42,29 @@ private:
 
 public:
 	TracingJob(Camera& camera,
-			   VoxelModel* model,
-			   Light* light,
-			   float deltaX,
-			   float deltaY,
-			   int startX,
-			   int startY,
-			   int iterCountX,
-			   int iterCountY,
-			   uint32_t* data,
-			   Lumix::MTJD::Manager& manager,
-			   Lumix::IAllocator& allocator,
-			   Lumix::IAllocator& job_allocator)
-			   : Lumix::MTJD::Job(Lumix::MTJD::Job::AUTO_DESTROY, Lumix::MTJD::Priority::Default, manager, allocator, job_allocator),
-			   _camera(camera),
-			   _model(model),
-			   _light(light),
-			   _deltaX(deltaX),
-			   _deltaY(deltaY),
-			   _startX(startX),
-			   _startY(startY),
-			   _iterCountX(iterCountX),
-			   _iterCountY(iterCountY),
-			   _data(data)
+			VoxelModel* model,
+			Light* light,
+			float deltaX,
+			float deltaY,
+			int startX,
+			int startY,
+			int iterCountX,
+			int iterCountY,
+			uint32_t* data,
+			Lumix::MTJD::Manager& manager,
+			Lumix::IAllocator& allocator,
+			Lumix::IAllocator& job_allocator)
+			: Lumix::MTJD::Job(Lumix::MTJD::Job::AUTO_DESTROY, Lumix::MTJD::Priority::Default, manager, allocator, job_allocator),
+			_camera(camera),
+			_model(model),
+			_light(light),
+			_deltaX(deltaX),
+			_deltaY(deltaY),
+			_startX(startX),
+			_startY(startY),
+			_iterCountX(iterCountX),
+			_iterCountY(iterCountY),
+			_data(data)
 	{
 		setJobName("TracingJob");
 	}
@@ -98,16 +98,13 @@ public:
 						color *= 0.0f;
 					}
 					
-					_data[index] = (uint32_t)(color.x * 255)
-						| (uint32_t)(color.y * 255) << 8
-						| (uint32_t)(color.z * 255) << 16
-						| 0xFF << 24;
+					_data[index] = (uint32_t)(color.x * 255) | (uint32_t)(color.y * 255) << 8 | (uint32_t)(color.z * 255) << 16 | 0xFF << 24;
 				}
 				else
 				{
-					_data[index] = (uint32_t)(Math::Abs(ray.Direction.x) * 100)
-						| (uint32_t)(Math::Abs(ray.Direction.y) * 100) << 8
-						| (uint32_t)(Math::Abs(ray.Direction.z) * 100) << 16
+					_data[index] = (uint32_t)((ray.Direction.x + 1.0f) * 100)
+						| (uint32_t)((ray.Direction.y + 1.0f) * 100) << 8
+						| (uint32_t)((ray.Direction.z + 1.0f) * 100) << 16
 						| 0xFF << 24;
 				}
 
@@ -156,7 +153,7 @@ public:
 		_voxelWord = LUMIX_NEW(_allocator, VoxelModel)(100, 10, 100);
 		_voxelWord->ObjMaterial = _objectMaterial;
 
-		_light = LUMIX_NEW(_allocator, PointLight)(Vector3(-1, -2, -1).Normalized());
+		_light = LUMIX_NEW(_allocator, DirectionalLight)(Vector3(-1, -2, -1).Normalized());
 		// TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP // TEMP //
 	}
 

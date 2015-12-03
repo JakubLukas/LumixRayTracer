@@ -12,8 +12,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\raytracer\collisions\collisions.cpp" />
+    <ClCompile Include="..\..\src\raytracer\lightning\light.cpp" />
     <ClCompile Include="..\..\src\raytracer\raytracer_system.cpp" />
     <ClCompile Include="..\..\src\raytracer\raytracer_plugin.cpp" />
+    <ClCompile Include="..\..\src\raytracer\shading\shader.cpp" />
+    <ClCompile Include="..\..\src\raytracer\texturing\sampler.cpp" />
     <ClCompile Include="..\..\src\raytracer\voxels\voxel_model.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -30,7 +33,6 @@
     <ClInclude Include="..\..\src\raytracer\raytracer_plugin.h" />
     <ClInclude Include="..\..\src\raytracer\ray_hit.h" />
     <ClInclude Include="..\..\src\raytracer\shading\shader.h" />
-    <ClInclude Include="..\..\src\raytracer\texturing\color_sampler.h" />
     <ClInclude Include="..\..\src\raytracer\texturing\sampler.h" />
     <ClInclude Include="..\..\src\raytracer\voxels\bresenham_full.h" />
     <ClInclude Include="..\..\src\raytracer\voxels\voxel_model.h" />
